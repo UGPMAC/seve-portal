@@ -1,0 +1,547 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Seve Todd Portal</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Source+Sans+3:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: Seve's student-athlete home base. Four views on a hash: Today (daily brief + checklist), Workout (TV screen), Practice (drill library), Record (team's development record). */
+:root{
+  --bg:#f7f8f6; --surface:#ffffff; --fg:#14201a; --muted:#5f6b64; --line:#dde3de;
+  --accent:#0f5c3a; --accent-fg:#ffffff; --accent-soft:#e3efe8;
+  --good:#1f7a3f; --warn:#b06a00; --warn-soft:#fff3df; --crit:#a3302a; --crit-soft:#fbe7e5;
+  --display:"Archivo",system-ui,sans-serif; --body:"Source Sans 3",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0f1512;--surface:#171f1a;--fg:#eef3ef;--muted:#9aa89f;--line:#2a3730;--accent:#4fc08a;--accent-fg:#0b1a12;--accent-soft:#193126;--good:#5fd08f;--warn:#f0b357;--warn-soft:#3a2a10;--crit:#ff8a80;--crit-soft:#3d1a18;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1512;--surface:#171f1a;--fg:#eef3ef;--muted:#9aa89f;--line:#2a3730;--accent:#4fc08a;--accent-fg:#0b1a12;--accent-soft:#193126;--good:#5fd08f;--warn:#f0b357;--warn-soft:#3a2a10;--crit:#ff8a80;--crit-soft:#3d1a18;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.45;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+.wrap{max-width:1040px;margin:0 auto}
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;padding-block:24px 14px;border-bottom:2px solid var(--accent)}
+.brand{font-family:var(--display);font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:12px;color:var(--accent)}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,40px);margin:4px 0 0;line-height:1.05;text-wrap:balance}
+.sub{color:var(--muted);margin-top:6px}
+.status{font-size:13px;color:var(--muted)}
+nav.views{display:flex;gap:6px;flex-wrap:wrap;padding-block:14px 4px}
+nav.views a{font-family:var(--display);font-weight:700;font-size:14px;letter-spacing:.04em;text-transform:uppercase;text-decoration:none;color:var(--muted);padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface)}
+nav.views a.on{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.view[hidden],[hidden]{display:none!important}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:18px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;min-width:0}
+.tile .lab{font-family:var(--display);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.tile .val{font-family:var(--display);font-weight:700;font-size:30px;margin-top:4px;font-variant-numeric:tabular-nums;line-height:1}
+.tile .note{font-size:13px;color:var(--muted);margin-top:6px}
+section.block{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.blockhead{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;font-family:var(--display);font-weight:700;font-size:17px}
+.blockhead::-webkit-details-marker{display:none}
+.blockhead .count{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:400}
+.blockhead .chev{transition:transform .2s;color:var(--muted)}
+details[open] .blockhead .chev{transform:rotate(90deg)}
+.body{padding:0 18px 18px;border-top:1px solid var(--line)}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-block:14px 10px}
+.toolbar .spacer{flex:1}
+button,.btn{font:inherit;font-family:var(--body);font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:8px;padding:8px 14px;cursor:pointer;text-decoration:none;display:inline-block}
+button.primary,.btn.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+button.small{padding:4px 10px;font-size:13px}
+button.ghost{border-color:transparent;color:var(--muted)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:13px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer}
+.chip.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.tablewrap{overflow-x:auto;min-width:0}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{text-align:left;font-family:var(--display);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.past td{color:var(--muted)}
+tr.next td{background:var(--accent-soft)}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.gray{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+.log{display:grid;gap:10px}
+.entry{display:grid;grid-template-columns:92px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.entry:last-child{border-bottom:0}
+.entry .when{font-family:var(--mono);font-size:12px;color:var(--muted);padding-top:3px}
+.entry .cat{font-family:var(--display);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.entry .ttl{font-weight:600;margin-top:2px}
+.entry .txt{white-space:pre-wrap;margin-top:3px;max-width:68ch}
+.entry .by{font-size:12px;color:var(--muted);margin-top:4px}
+.entry .acts{margin-top:6px;display:flex;gap:6px}
+.cat-golf{color:var(--accent)}.cat-fitness{color:#1f5fa8}.cat-recovery{color:var(--warn)}.cat-mindset{color:#7a3fa0}.cat-tournament{color:var(--good)}.cat-admin{color:var(--muted)}.cat-daily{color:var(--muted)}.cat-school{color:#1f5fa8}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .cat-fitness,:root:not([data-theme="light"]) .cat-school{color:#7fb3ff}:root:not([data-theme="light"]) .cat-mindset{color:#c99cf0}}
+:root[data-theme="dark"] .cat-fitness,:root[data-theme="dark"] .cat-school{color:#7fb3ff}:root[data-theme="dark"] .cat-mindset{color:#c99cf0}
+.team{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;padding-top:14px}
+.member{border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}
+.member .nm{font-weight:600}
+.member .role{color:var(--muted);font-size:14px}
+.member .ct{font-family:var(--mono);font-size:12px;margin-top:6px;word-break:break-all}
+.profile{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;padding-top:14px}
+.profile h3,.plan h3{font-family:var(--display);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+.profile ul{margin:0;padding-left:18px}
+.profile li{margin:3px 0}
+form.edit{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;padding:14px;border:1px dashed var(--line);border-radius:10px;margin-top:10px;background:var(--bg)}
+form.edit label{display:grid;gap:4px;font-size:12px;color:var(--muted);font-weight:600;min-width:0}
+form.edit input,form.edit select,form.edit textarea{font:inherit;font-size:14px;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--fg);min-width:0;width:100%}
+form.edit textarea{min-height:80px;resize:vertical;font-family:var(--mono);font-size:13px}
+form.edit .full{grid-column:1/-1}
+form.edit .actions{grid-column:1/-1;display:flex;gap:8px;justify-content:flex-end}
+.empty{color:var(--muted);padding:18px 0;font-size:14px}
+.links a{color:var(--accent);font-weight:600}
+.hint{font-size:13px;color:var(--muted);padding-top:10px}
+.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:14px;z-index:20}
+/* Today + checklist */
+.today-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:10px;padding-top:18px}
+.today-head .day{font-family:var(--display);font-weight:800;font-size:clamp(22px,3vw,30px)}
+.today-head .focus{color:var(--muted)}
+.checks{display:grid;gap:0}
+.check{display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:start;padding:12px 0;border-bottom:1px solid var(--line)}
+.check:last-child{border-bottom:0}
+.check input{width:24px;height:24px;margin-top:2px;accent-color:var(--accent);cursor:pointer}
+.check .t{font-weight:600}
+.check .d{color:var(--muted);font-size:14px;white-space:pre-wrap}
+.check.done .t{text-decoration:line-through;color:var(--muted)}
+.check .meta{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}
+.progress{height:8px;background:var(--line);border-radius:999px;overflow:hidden;margin-top:10px}
+.progress i{display:block;height:100%;background:var(--accent);width:0}
+.finish{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding-top:12px}
+.finish input{flex:1;min-width:200px;font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg)}
+.gate{background:var(--warn-soft);color:var(--warn);border-radius:8px;padding:8px 12px;font-size:14px;font-weight:600;margin-top:12px}
+/* TV workout screen */
+.tv{padding-top:18px}
+.tv .tvhead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:10px}
+.tv .tvhead .day{font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,48px)}
+.tv .check{grid-template-columns:44px 1fr;padding:18px 0}
+.tv .check input{width:34px;height:34px}
+.tv .check .t{font-size:clamp(20px,2.6vw,32px);font-family:var(--display);font-weight:700}
+.tv .check .d{font-size:clamp(15px,1.8vw,22px)}
+.tv .progress{height:12px}
+.plan{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;padding-top:14px}
+.plan .dayplan{border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}
+.plan .dayplan.today{border-color:var(--accent);background:var(--accent-soft)}
+.plan ul{margin:0;padding-left:18px}
+.plan li{margin:4px 0}
+.plan li small{display:block;color:var(--muted)}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;padding-top:14px}
+.kv div{min-width:0}
+.kv ul{margin:0;padding-left:18px}
+@media (max-width:520px){.entry{grid-template-columns:1fr}.entry .when{padding-top:0}}
+@media (prefers-reduced-motion: reduce){.blockhead .chev{transition:none}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="brand">Urban Golf Performance · Student Athlete</div>
+      <h1>Seve Todd</h1>
+      <div class="sub" id="subline">Golf, training, school and home in one place. Open it, do the day, check it off.</div>
+    </div>
+    <div class="status" id="status">Connecting…</div>
+  </header>
+  <nav class="views" id="nav">
+    <a href="#today" data-v="today">Today</a>
+    <a href="#workout" data-v="workout">Workout</a>
+    <a href="#practice" data-v="practice">Practice</a>
+    <a href="#school" data-v="school">School</a>
+    <a href="#record" data-v="record">Record</a>
+  </nav>
+
+  <!-- ===== TODAY ===== -->
+  <div class="view" id="v-today" hidden>
+    <div class="today-head"><div class="day" id="td-day">Today</div><div class="focus" id="td-focus"></div></div>
+    <div class="tiles">
+      <div class="tile"><div class="lab">Next event</div><div class="val" id="td-next" style="font-size:18px;line-height:1.2">—</div><div class="note" id="td-next-note"></div></div>
+      <div class="tile"><div class="lab">Return to play</div><div class="val" id="td-rtp" style="font-size:18px;line-height:1.2">—</div><div class="note" id="td-rtp-note"></div></div>
+      <div class="tile"><div class="lab">Scoring average</div><div class="val" id="td-avg">—</div><div class="note" id="td-avg-note"></div></div>
+      <div class="tile"><div class="lab">Days done this week</div><div class="val" id="td-streak">—</div><div class="note">finished days, Mon to Sun</div></div>
+    </div>
+    <div id="td-gate"></div>
+    <section class="block"><div class="blockhead"><span>Workout <span class="count" id="td-wo-count"></span></span><a class="btn small" href="#workout">Put on the TV ›</a></div><div class="body"><div class="checks" id="td-workout"></div><div class="progress"><i id="td-wo-bar"></i></div></div></section>
+    <section class="block"><div class="blockhead"><span>Practice <span class="count" id="td-pr-count"></span></span><a class="btn small" href="#practice">All drills ›</a></div><div class="body"><div class="checks" id="td-practice"></div></div></section>
+    <section class="block"><div class="blockhead"><span>Reading and mindset</span></div><div class="body"><div class="checks" id="td-reading"></div></div></section>
+    <section class="block"><div class="blockhead"><span>School and home</span><a class="btn small" href="#school">Subjects and due dates ›</a></div><div class="body"><div id="td-due"></div><div class="checks" id="td-school"></div><div class="finish" style="padding-top:14px"><label style="font-size:13px;color:var(--muted);font-weight:600">Homework today, minutes <input id="td-hw" type="number" inputmode="numeric" min="0" step="5" style="width:90px;margin-left:8px;font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg)"></label></div><div class="hint">Add today's homework and family items as you go.</div><form class="edit" id="td-addform" style="margin-top:10px"><label class="full">Add an item for today<input id="td-add-text" placeholder="Math worksheet · Walk the dog · Pack for Saturday"></label><div class="actions"><button type="submit" class="small">Add</button></div></form></div></section>
+    <section class="block"><div class="blockhead"><span>Finish the day</span></div><div class="body"><div class="finish"><input id="td-note" placeholder="One line on how it went (wrist, energy, what clicked)"><button class="primary" id="td-finish">Finish today</button></div><div class="hint" id="td-finish-hint">Writes a dated entry to the record so the team sees what got done.</div></div></section>
+  </div>
+
+  <!-- ===== WORKOUT (TV) ===== -->
+  <div class="view tv" id="v-workout" hidden>
+    <div class="tvhead"><div class="day" id="wo-day">Workout</div><div class="focus" id="wo-focus"></div></div>
+    <div id="wo-gate"></div>
+    <div class="checks" id="wo-list"></div>
+    <div class="progress"><i id="wo-bar"></i></div>
+    <div class="toolbar"><span class="hint" id="wo-source"></span><div class="spacer"></div><button class="small ghost" id="btn-edit-workout" hidden>Edit workout plan</button></div>
+    <form class="edit" id="wo-form" hidden></form>
+    <details class="block"><summary class="blockhead"><span>Week at a glance</span><span class="chev">›</span></summary><div class="body"><div class="plan" id="wo-week"></div></div></details>
+  </div>
+
+  <!-- ===== PRACTICE ===== -->
+  <div class="view" id="v-practice" hidden>
+    <div class="today-head"><div class="day" id="pr-day">Practice</div><div class="focus" id="pr-focus"></div></div>
+    <div id="pr-gate"></div>
+    <div class="toolbar"><span class="hint" id="pr-source"></span><div class="spacer"></div><button class="small ghost" id="btn-edit-practice" hidden>Edit practice plan</button></div>
+    <form class="edit" id="pr-form" hidden></form>
+    <section class="block"><div class="blockhead"><span>Today</span></div><div class="body"><div class="checks" id="pr-today"></div></div></section>
+    <section class="block"><div class="blockhead"><span>Week at a glance</span></div><div class="body"><div class="plan" id="pr-week"></div></div></section>
+    <section class="block"><div class="blockhead"><span>What we are working on</span></div><div class="body"><div class="kv" id="pr-focusareas"></div></div></section>
+    <section class="block"><div class="blockhead"><span>Drill library</span></div><div class="body"><div class="plan" id="pr-library"></div></div></section>
+  </div>
+
+  <!-- ===== SCHOOL ===== -->
+  <div class="view" id="v-school" hidden>
+    <div class="today-head"><div class="day">School</div><div class="focus">So the team, and Seve, can see the workload next to the golf.</div></div>
+    <div class="tiles">
+      <div class="tile"><div class="lab">Homework this week</div><div class="val" id="sc-week">—</div><div class="note">minutes, Mon to Sun, from the daily check-ins</div></div>
+      <div class="tile"><div class="lab">Average per school day</div><div class="val" id="sc-avg">—</div><div class="note">minutes, days with homework logged</div></div>
+      <div class="tile"><div class="lab">Subjects needing help</div><div class="val" id="sc-help">—</div><div class="note" id="sc-help-note"></div></div>
+      <div class="tile"><div class="lab">Next due</div><div class="val" id="sc-next" style="font-size:18px;line-height:1.2">—</div><div class="note" id="sc-next-note"></div></div>
+    </div>
+    <div class="toolbar"><span class="hint" id="sc-source"></span><div class="spacer"></div><button class="small ghost" id="btn-edit-school" hidden>Edit subjects and due dates</button></div>
+    <form class="edit" id="sc-form" hidden></form>
+    <section class="block"><div class="blockhead"><span>Subjects</span></div><div class="body"><div class="tablewrap"><table><thead><tr><th>Subject</th><th>How it's going</th><th>Notes</th></tr></thead><tbody id="sc-subjects"></tbody></table></div><div class="empty" id="sc-subjects-empty" hidden>Add his subjects so the team can see where school is easy and where it is heavy.</div></div></section>
+    <section class="block"><div class="blockhead"><span>Tests and due dates</span></div><div class="body"><div class="tablewrap"><table><thead><tr><th>Date</th><th>What</th><th>Subject</th></tr></thead><tbody id="sc-due"></tbody></table></div><div class="empty" id="sc-due-empty" hidden>Nothing coming up on the list.</div></div></section>
+    <section class="block"><div class="blockhead"><span>Homework time, last 14 days</span></div><div class="body"><div class="tablewrap"><table><thead><tr><th>Day</th><th>Minutes</th><th>Note</th></tr></thead><tbody id="sc-days"></tbody></table></div><div class="hint">Minutes come from the Today page. Enter them when he finishes homework.</div></div></section>
+    <section class="block"><div class="blockhead"><span>Notes for the team</span></div><div class="body"><div class="hint" id="sc-notes" style="white-space:pre-wrap;color:var(--fg);font-size:15px;padding-top:12px"></div></div></section>
+  </div>
+
+  <!-- ===== RECORD (team) ===== -->
+  <div class="view" id="v-record" hidden>
+    <div class="tiles">
+      <div class="tile"><div class="lab">Scoring average</div><div class="val" id="t-avg">—</div><div class="note" id="t-avg-note">from completed tournament rounds</div></div>
+      <div class="tile"><div class="lab">Handicap</div><div class="val" id="t-hcp">—</div><div class="note" id="t-hcp-note"></div></div>
+      <div class="tile"><div class="lab">Next event</div><div class="val" id="t-next" style="font-size:18px;line-height:1.2">—</div><div class="note" id="t-next-note"></div></div>
+      <div class="tile"><div class="lab">Return to play</div><div class="val" id="t-rtp" style="font-size:18px;line-height:1.2">—</div><div class="note" id="t-rtp-note"></div></div>
+    </div>
+
+    <details class="block" open id="sec-schedule">
+      <summary class="blockhead"><span>Tournament schedule &amp; results <span class="count" id="c-events"></span></span><span class="chev">›</span></summary>
+      <div class="body">
+        <div class="toolbar">
+          <div class="chips" id="evfilter"><span class="chip on" data-f="all">All</span><span class="chip" data-f="upcoming">Upcoming</span><span class="chip" data-f="played">Played</span></div>
+          <div class="spacer"></div>
+          <button class="primary" id="btn-add-event">+ Add tournament</button>
+        </div>
+        <form class="edit" id="evform" hidden></form>
+        <div class="tablewrap"><table id="evtable"><thead><tr><th>Date</th><th>Tournament</th><th>Tour</th><th>Course</th><th>Reg.</th><th>R1</th><th>R2</th><th>R3</th><th>Total</th><th>Place</th><th></th></tr></thead><tbody id="evbody"></tbody></table></div>
+        <div class="empty" id="evempty" hidden>No tournaments yet. Add the first one above.</div>
+      </div>
+    </details>
+
+    <details class="block" open id="sec-log">
+      <summary class="blockhead"><span>Development log <span class="count" id="c-log"></span></span><span class="chev">›</span></summary>
+      <div class="body">
+        <div class="toolbar">
+          <div class="chips" id="logfilter"><span class="chip on" data-f="all">All</span><span class="chip" data-f="golf">Golf</span><span class="chip" data-f="tournament">Tournament review</span><span class="chip" data-f="fitness">Fitness</span><span class="chip" data-f="recovery">Recovery</span><span class="chip" data-f="mindset">Mindset</span><span class="chip" data-f="daily">Daily</span><span class="chip" data-f="admin">Admin</span></div>
+          <div class="spacer"></div>
+          <button class="primary" id="btn-add-log">+ Add entry</button>
+        </div>
+        <form class="edit" id="logform" hidden></form>
+        <div class="log" id="logbody"></div>
+        <div class="empty" id="logempty" hidden>No entries yet.</div>
+      </div>
+    </details>
+
+    <details class="block" id="sec-team">
+      <summary class="blockhead"><span>Team <span class="count" id="c-team"></span></span><span class="chev">›</span></summary>
+      <div class="body">
+        <div class="toolbar"><div class="spacer"></div><button id="btn-add-member">+ Add team member</button></div>
+        <form class="edit" id="teamform" hidden></form>
+        <div class="team" id="teambody"></div>
+      </div>
+    </details>
+
+    <details class="block" id="sec-profile">
+      <summary class="blockhead"><span>Player profile, goals &amp; resources</span><span class="chev">›</span></summary>
+      <div class="body">
+        <div class="toolbar"><div class="spacer"></div><button id="btn-edit-profile">Edit profile</button></div>
+        <form class="edit" id="profform" hidden></form>
+        <div class="profile" id="profbody"></div>
+      </div>
+    </details>
+  </div>
+</div>
+
+<script id="snap" type="application/json">{"publishedAt":"2026-11-04T16:20:00Z","events":[{"id":"e12","course":"Del Monte Golf Course","date":"2025-11-24","endDate":"2025-11-25","location":"Monterey, CA","name":"Holiday Series I — Del Monte","notes":"First JTNC event. R1 88 (43/45). R2 78 (41/37) — 10-shot improvement day 2. Finish not in email.","place":"","r1":"88","r2":"78","r3":"","regOpens":"","registered":"Y","tour":"JTNC"},{"id":"e13","course":"Laguna Seca Golf Ranch","date":"2026-01-11","endDate":"","location":"Monterey, CA","name":"Laguna Seca Winter Championship","notes":"Boys Gold, shortened format: 66 (+11). 3rd of 9. Not counted in 18-hole scoring average.","place":"3","r1":"","r2":"","r3":"","regOpens":"","registered":"Y","tour":"PBJGA"},{"id":"e14","course":"Pacific Grove Golf Links","date":"2026-02-01","endDate":"","location":"Pacific Grove, CA","name":"Pacific Grove Winter Championship","notes":"Boys Gold, shortened format: 51 (+4), tied 2nd–5th, 3 back of winner. Not counted in 18-hole scoring average.","place":"T-2","r1":"","r2":"","r3":"","regOpens":"","registered":"Y","tour":"PBJGA"},{"id":"e15","course":"TPC Monterey at Pasadera","date":"2026-07-06","endDate":"","location":"Monterey, CA","name":"TPC Monterey Bay Summer Championship","notes":"Boys Gold (par 71, 5791 yd, slope 135). 84 (42/42, +13): 1 birdie, 8 pars, 5 bogeys, 3 doubles, 1 triple. 7th of 15; winner 78.","place":"7","r1":"84","r2":"","r3":"","regOpens":"","registered":"Y","tour":"PBJGA"},{"id":"e01","course":"Wilshire Country Club","date":"2026-08-07","endDate":"2026-08-09","location":"Los Angeles, CA","name":"Jr. Club Championship — Championship Flight","notes":"Fri 18-hole stroke-play qualifier (3 spots), then match play. Add qualifying score + result.","place":"","r1":"","r2":"","r3":"","regOpens":"","registered":"Y","tour":"Club"},{"id":"e02","course":"Pacific Grove Golf Links","date":"2026-08-23","endDate":"","location":"Pacific Grove, CA","name":"Pacific Grove Summer Championship","notes":"Boys Gold. No scorecard email — confirm whether played and score (PBJGA leaderboard).","place":"","r1":"","r2":"","r3":"","regOpens":"","registered":"Y","tour":"PBJGA"},{"id":"e03","course":"DeLaveaga Golf Course","date":"2026-09-05","endDate":"2026-09-06","location":"Santa Cruz, CA","name":"Fall Series IV — DeLaveaga","notes":"R1 78 (40/38, 1 birdie, 8 bogey+). R2 74 (37/37, par 5s even). 20 POY pts, T89 Boys 26-27. Finish position not in email — confirm on JTNC leaderboard.","place":"","r1":"78","r2":"74","r3":"","regOpens":"","registered":"Y","tour":"JTNC"},{"id":"e04","course":"Del Monte Golf Course","date":"2026-09-13","endDate":"","location":"Monterey, CA","name":"Del Monte Fall Championship","notes":"Boys Gold. Wrist was fractured around this date — confirm whether played (PBJGA standings on Sep 25 show 2 events, 4 pts, T14).","place":"","r1":"","r2":"","r3":"","regOpens":"","registered":"Y","tour":"PBJGA"},{"id":"e05","course":"Del Monte Golf Course","date":"2026-11-07","endDate":"","location":"Monterey, CA","name":"US Kids Monterey Challenge","notes":"AJGA points. Doctor cleared to play; recovery team flagged as early — monitor the wrist.","place":"","r1":"","r2":"","r3":"","regOpens":"","registered":"Y","tour":"US Kids"},{"id":"e06","course":"Hunter Ranch Golf Course","date":"2026-12-05","endDate":"2026-12-06","location":"Paso Robles, CA","name":"Holiday Series II — Hunter Ranch","notes":"AJGA points. ~6-week mark post-cast; Daniel considers this the first safe competition.","place":"","r1":"","r2":"","r3":"","regOpens":"Nov 2","registered":"N","tour":"JTNC"},{"id":"e07","course":"Poppy Hills GC","date":"2026-12-28","endDate":"2026-12-29","location":"Pebble Beach, CA","name":"Holiday Series III — Poppy Hills","notes":"AJGA points. ~9-week mark — full return target.","place":"","r1":"","r2":"","r3":"","regOpens":"Nov 2","registered":"N","tour":"JTNC"},{"id":"e08","course":"Laguna Seca Golf Ranch","date":"2027-04-01","endDate":"2027-04-04","location":"Monterey, CA","name":"AJGA Junior All-Star at Laguna Seca","notes":"AJGA membership application in progress.","place":"","r1":"","r2":"","r3":"","regOpens":"","registered":"N","tour":"AJGA"},{"id":"e09","course":"Apache Wells Country Club","date":"2027-04-29","endDate":"2027-05-02","location":"Mesa, AZ","name":"Mesa Hohokams Junior All-Star (Thunderbirds)","notes":"","place":"","r1":"","r2":"","r3":"","regOpens":"","registered":"N","tour":"AJGA"},{"id":"e10","course":"The Havens Country Club","date":"2027-07-19","endDate":"2027-07-22","location":"Vista, CA","name":"TaylorMade Qi4D Junior All-Star","notes":"","place":"","r1":"","r2":"","r3":"","regOpens":"","registered":"N","tour":"AJGA"},{"id":"e11","course":"Hunter Ranch Golf Course","date":"2027-08-09","endDate":"2027-08-12","location":"Paso Robles, CA","name":"AJGA Junior All-Star at Hunter Ranch","notes":"","place":"","r1":"","r2":"","r3":"","regOpens":"","registered":"N","tour":"AJGA"}],"log":[{"id":"l01","author":"Matt Hoffenberg","category":"golf","date":"2026-09-01","title":"Lesson plan set — goals and practice games","text":"Goals: dial in putting/short game, more GIR, shoot 67, play aggressive.\nTools: Upgame app for stats. 30/60/90 wedge challenge (9 shots, carry-distance error = score; beat Matt's 13). Driver speed 3-strike game; warm up with 20 left-handed swings at 50%.\nPutting: 50x 3-footers in a row; 6 tees at 5 ft ×5 rounds (track makes/30); lag drill from 15/20/25 ft.\nOn course: find patterns in shots that don't suit the eye; one no-score creative round a week; closest-to-pin chipping contests."},{"id":"l08","author":"Matt Hoffenberg","category":"golf","date":"2026-09-15","title":"Conversation with Coach Chelso about Seve’s Development","text":"Chelso shared some technical and non-technical aspects of Seve’s game that they have been focusing on:\n• Seve has a grip on the weaker side. They have been adjusting it to a stronger position each time they meet for a lesson.\n• He tends to not shift enough weight to his right side in the backswing, and can do a better job loading into his right side. Chelso thinks strengthening his right leg through working out could be beneficial.\n• Seve rolls the ball well on the greens; he just needs to build confidence and have more structure in his putting practice.\n• His super power is resilience and work ethic.\n\n(Relayed by Matt in #junior-golf, Nov 3.)"},{"id":"l02","author":"Mac Todd","category":"recovery","date":"2026-09-20","title":"Right-wrist radius fracture","text":"Fell on concrete during touch football at the school's Marin camp; played through ~3 days before X-ray confirmed a fractured radius. Splint, then cast. No golf for about a month."},{"id":"l03","author":"Mac Todd","category":"recovery","date":"2026-10-26","title":"Cast off","text":"Doctor: cleared for the Nov 7 tournament; chipping and putting allowed right away; no full swings this week."},{"id":"l04","author":"Daniel Jo","category":"recovery","date":"2026-10-27","title":"9-week Return to Golf / Competition program issued","text":"Phased progression for the right wrist, planned to the Dec 28 Poppy Hills event (9-week mark); Dec 5 Hunter Ranch sits at ~6 weeks and is likely safe. Anything sooner risks re-aggravation. Phases will move faster if Seve responds well (he was only casted ~1 month). Matt, Colin and Daniel coordinate golf/fitness/recovery; team FaceTime every other week."},{"id":"l05","author":"Matt Hoffenberg","category":"admin","date":"2026-10-31","title":"Team FaceTime — rehab exercises, schedule, practice routine","text":"Matt + Daniel with Seve, Sat 12:30. Set the biweekly cadence. December JTNC registrations open Nov 2 (Hunter Ranch Dec 5–6, Poppy Hills Dec 28–29). Matt published the 2026-27 schedule sheet."},{"id":"l06","author":"Mac Todd","category":"admin","date":"2026-11-02","title":"Portal launched — open items","text":"Filled from BlueGolf result emails: Del Monte (Nov 2025), Laguna Seca, Pacific Grove Winter, TPC Monterey, DeLaveaga.\nStill need:\n• Finish positions for DeLaveaga and Del Monte Holiday I (JTNC leaderboard)\n• Whether Pacific Grove Summer (8/23) and Del Monte Fall (9/13) were played, and scores\n• Wilshire Jr Club Championship qualifying score / match result\n• Chelso Barrett: contact + session cadence\n• Register for Hunter Ranch and Poppy Hills (opens today)"},{"id":"l07","author":"Mac Todd","category":"admin","date":"2026-11-02","title":"GHIN check — Handicap Index 0.1","text":"H.I. 0.1 (low index 0.1, set 9/13/26). Preserve Golf Club, NCGA.\nMost recent posted rounds: 9/12 Preserve Gold tees 78 (diff 4.5) and 9 holes 36 (diff 1.5); 9/6 De Laveaga Blue 78 (diff 6.3).\nNo rounds posted since the wrist injury — index will hold at 0.1 until he posts again."},{"id":"l09","author":"Mac Todd","category":"fitness","date":"2026-11-04","title":"Daily training starts — brief to Colin, Daniel and Matt","text":"Wrist almost fully healed, no pain in activities. Seve does a daily workout of at least 30 minutes from here: strength in the legs and core, with AiM work integrated every day. Colin to send the program, rules and any workout photos or videos so it loads into his portal; the interim plan on the Workout page holds until then."}],"team":[{"id":"t01","contact":"matth@ugp.la · 657.418.7094","focus":"Lesson plan, practice structure, tournament schedule. Biweekly check-in Sat 12:30–1:00 PT (FaceTime, with Daniel).","name":"Matt Hoffenberg","order":1,"org":"UGP","role":"Golf Performance Coach (lead)"},{"id":"t02","contact":"","focus":"In-person swing work: moving grip to a stronger position; loading into the right side in the backswing; structured putting practice. Confirm contact and cadence.","name":"Chelso Barrett","order":2,"org":"CordeValle","role":"Swing coach"},{"id":"t03","contact":"danielj@ugp.la · 310.529.1801","focus":"Right-wrist return-to-golf program (9-week outline, adjusted weekly). Weekly check-in with Seve.","name":"Daniel Jo","order":3,"org":"UGP","role":"Recovery Specialist"},{"id":"t04","contact":"colinh@ugp.la · 657.418.6640","focus":"Daily strength program: legs, core, AiM. Program incoming Nov 2026.","name":"Colin Heffner","order":4,"org":"UGP","role":"Golf Fitness Trainer"},{"id":"t06","contact":"mac@ugp.la","focus":"Sets the standard; final call on schedule and return-to-play timing.","name":"Mac Todd","order":6,"org":"","role":"Dad · direction & mindset"},{"id":"t07","contact":"adbtodd@gmail.com","focus":"Copied on all tour registrations and tee times.","name":"Alessandra Todd","order":7,"org":"","role":"Mom · logistics"}],"profile":{"bio":"Seve Todd, 12 · Carmel, CA\nGHIN Handicap Index 0.1 — Preserve Golf Club / NCGA\nPlays JTNC, Pebble Beach Junior Golf (Boys Gold), US Kids; AJGA membership in progress\nMost confident: off the tee · Least confident: putting, approach shots\nRight-wrist radius fracture (Sep 2026, school camp); cast ~1 month, off Oct 26","goals":"Dial in putting and short game\nMore greens in regulation\nShoot 67 — play aggressive","handicap":"0.1","handicapAsOf":"Nov 2, 2026 (GHIN) · Low H.I. 0.1 on 9/13/26","links":"2026-27 Golf Schedule — Seve Todd (Matt's sheet) | https://docs.google.com/spreadsheets/d/1jks9pXIPd5WCrC7wFOlH2k2UOU3pmt9Jkk2hHbz6WFo/edit\nSeve Todd Portal (Google Sheet) | https://docs.google.com/spreadsheets/d/1MXkpjnZ8sFhele73_jgYsNWgU1f3mUdnVZG-s5mkva8/edit\nSeve Lesson Plan | https://docs.google.com/document/d/1DNa9B5X0Sf6GIhj3SJT9L_W7oXRyrpn8jUN4xKU6Fvo/edit\nSeve To-do (Matt) | https://docs.google.com/document/d/1O4p6PrMiNrFskY6RAwC18QRqDA6DQqgGythtfwLZYHc/edit\nJTNC schedule & standings | https://jtnc.bluegolf.com/bluegolf/jtnc26/schedule/upcoming.htm\nPebble Beach Junior Golf schedule | https://pbjrgolf.bluegolf.com/bluegolf/pbjrgolf26/schedule/upcoming.htm","metrics":"Scoring average (tournament rounds)\nGIR %\nPutts per round / 3-putt rate\nUp-and-down %\nPenalty shots per round\n60–100 yd proximity\n30/60/90 wedge challenge score (Matt's low: 13)\nDriver speed (3-strike game)","priorities":"Increase GIR %\nFewer putts per round, fewer 3-putts — alignment and starting it on line\n60–100 yd proximity to the hole\nTrack everything in the Upgame app","rhythm":"Daily 30-minute workout (legs, core, AiM)\nSat 12:30–1:00 PT every 2 weeks — Matt + Daniel lesson plan & rehab check-in\nWeekly recovery check-in with Daniel\nOne no-score round a week to experiment\nPost-tournament review: what went well / what didn't / what I learned / what I'll practice this week","rtpNote":"Cast off Oct 26. Wrist nearly healed, no pain in activities (Nov 4). Chip, putt and half swings; full swings when Matt or Daniel clear them. Dec 5 = first full competition target.","rtpPhase":"Week 2 off cast"},"school":{"due":[],"notes":"All Saints Day School, 7th grade. Add his subjects, how each is going, and any tests or projects coming up so the team can see the week the way Seve does.","subjects":[]},"plans":{"practice":{"gate":"Wrist: chip and putt cleared. Half swings with wedges only until Matt or Daniel clears full swings. No speed training yet.","source":"From Matt Hoffenberg’s lesson plan (Sep 1) and Chelso Barrett’s notes (Sep 15). Matt owns this plan.","focus":{"mon":"Putting structure","tue":"Wedges 30/60/90","wed":"Putting + grip","thu":"Short game","fri":"Wedges + lag putting","sat":"Play or tournament","sun":"Creative round or rest"},"days":{"mon":[{"t":"50 in a row from 3 ft","d":"Start over at a miss. Track the best streak."},{"t":"6 tees around the hole, 5 ft","d":"Go around 5 times. Write down makes out of 30."},{"t":"Grip check before every putt and chip","d":"Stronger position, the way Chelso set it."}],"tue":[{"t":"30/60/90 wedge challenge","d":"3 shots each from 30, 60 and 90 yards. Score = yards off your carry number. 9 shots. Beat Matt’s 13."},{"t":"Chipping contest, closest to the pin","d":"Two balls, 10 chips, keep score against yourself."}],"wed":[{"t":"Lag putting ladder","d":"Tees in a 3 ft circle. Make 3 in a row from 15, then 20, then 25 ft."},{"t":"50 in a row from 3 ft","d":"Same drill as Monday. Is the streak longer?"},{"t":"20 half swings, grip focus","d":"Wedge only, 50% speed. Feel the stronger grip."}],"thu":[{"t":"Up-and-down game","d":"10 spots around the green. Count how many you get up and down out of 10."},{"t":"6 tees around the hole, 5 ft","d":"5 rounds, makes out of 30. Compare to Monday."}],"fri":[{"t":"30/60/90 wedge challenge","d":"Score it. Did it drop from Tuesday?"},{"t":"Lag putting ladder","d":"15, 20, 25 ft. 3 in a row at each."}],"sat":[{"t":"Play","d":"Tournament or 9 holes. Afterward: what went well, what didn’t, what I learned, what I practice this week."}],"sun":[{"t":"One no-score round","d":"Try shots, be creative, no card. Or rest."}]},"focusAreas":[{"t":"Grip","items":["Moving to a stronger position, a little more each lesson (Chelso)","Check it before every shot in practice"]},{"t":"Backswing load","items":["Shift more weight into the right side going back (Chelso)","Right leg strength in the gym supports this"]},{"t":"Putting","items":["He rolls it well; build confidence with structure (Chelso)","Fewer 3-putts: alignment and starting it on line (Matt)"]},{"t":"Wedges and approach","items":["60–100 yd proximity to the hole","30/60/90 is the weekly test"]},{"t":"Superpower","items":["Resilience and work ethic (Chelso)"]}],"library":[{"t":"Putting","items":[{"t":"50 in a row, 3 ft","d":"Restart on a miss"},{"t":"6 tees at 5 ft","d":"5 rounds, makes out of 30"},{"t":"Lag ladder","d":"15/20/25 ft, 3 in a row to move on"}]},{"t":"Wedges","items":[{"t":"30/60/90 challenge","d":"3 balls per distance, carry-distance error is the score"},{"t":"Fairway game","d":"How many shots to get through the whole simulator course"}]},{"t":"Short game","items":[{"t":"Up-and-down out of 10","d":"Around the green"},{"t":"Closest-to-pin chipping","d":"Against a partner or two balls"}]},{"t":"Speed (when cleared)","items":[{"t":"3-strike game","d":"Driver, as fast as you can. Warm up with 20 left-handed swings at 50%."}]},{"t":"On course","items":[{"t":"Find your patterns","d":"Which shots don’t suit your eye? Make a plan for them."},{"t":"No-score round","d":"Once a week"},{"t":"Post-tournament review","d":"Well / didn’t / learned / practice this week"}]}]},"workout":{"gate":"Interim plan until Colin’s program arrives. Wrist is nearly healed and pain-free: no loading through the wrist (no push-ups or planks on hands) until Daniel clears it. Everything else is legs, core and AiM.","source":"Dad’s brief to Colin, Daniel and Matt (Nov 4): 30 minutes every day, legs and core, AiM work daily. Colin replaces this with the real program.","focus":{"mon":"Legs","tue":"Core + AiM","wed":"Legs","thu":"Core + AiM","fri":"Legs","sat":"Move","sun":"AiM + stretch"},"days":{"mon":[{"t":"Warm-up, 5 min","d":"Jog in place, leg swings, hip circles"},{"t":"Bodyweight squats, 3 x 15","d":"Slow down, drive up"},{"t":"Split squats, 3 x 10 each leg","d":"Extra set on the right leg (Chelso: load the right side)"},{"t":"Glute bridges, 3 x 15","d":"Squeeze at the top for 2 seconds"},{"t":"Single-leg balance, 30 sec each","d":"Eyes open, then eyes closed"},{"t":"AiM work","d":"Daniel’s wrist and foot exercises from the Oct 31 call"}],"tue":[{"t":"Warm-up, 5 min","d":""},{"t":"Dead bugs, 3 x 10 each side","d":"Low back stays on the floor"},{"t":"Side plank on forearm, 3 x 20 sec each","d":"Forearm, not hand"},{"t":"Bird dogs, 3 x 10 each side","d":"Slow and steady"},{"t":"Bicycle crunches, 3 x 20","d":""},{"t":"AiM work","d":"Wrist and foot exercises"}],"wed":[{"t":"Warm-up, 5 min","d":""},{"t":"Reverse lunges, 3 x 10 each leg","d":"Extra set on the right leg"},{"t":"Step-ups, 3 x 10 each leg","d":"Stair or box, control the way down"},{"t":"Wall sit, 3 x 30 sec","d":""},{"t":"Calf raises, 3 x 20","d":""},{"t":"AiM work","d":""}],"thu":[{"t":"Warm-up, 5 min","d":""},{"t":"Dead bugs, 3 x 10 each side","d":""},{"t":"Side plank on forearm, 3 x 25 sec each","d":"Add 5 seconds from Tuesday"},{"t":"Glute bridges, 3 x 15","d":""},{"t":"Superman holds, 3 x 20 sec","d":""},{"t":"AiM work","d":""}],"fri":[{"t":"Warm-up, 5 min","d":""},{"t":"Bodyweight squats, 3 x 15","d":""},{"t":"Split squats, 3 x 12 each leg","d":"Two more reps than Monday"},{"t":"Single-leg glute bridges, 3 x 8 each","d":""},{"t":"Single-leg balance, 45 sec each","d":""},{"t":"AiM work","d":""}],"sat":[{"t":"Move for 30 minutes","d":"Walk the course, bike, swim, or play"},{"t":"AiM work","d":""}],"sun":[{"t":"AiM work","d":""},{"t":"Stretch, 15 min","d":"Hips, hamstrings, calves, forearms"}]}},"reading":{"items":[{"t":"Read 15 minutes","d":"Current book: add it here","m":"daily"},{"t":"Write one line: what went well today","d":"In the box at the bottom","m":"daily"}]},"school":{"items":[{"t":"Homework done before practice","d":"Check planner","m":"school days"},{"t":"Bag packed for tomorrow","d":"School and golf","m":"daily"}]}}}</script>
+<script>
+(function(){
+  const $=s=>document.querySelector(s);
+  const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  let db=null,user=null,canWrite=true,uid=null;
+  let events=[],log=[],team=[],profile={},plans={},day={},weekDays={},recentDays={},school={};
+  let evF='all',logF='all';
+  const now=new Date();
+  const today=localISO(now);
+  const DOW=['sun','mon','tue','wed','thu','fri','sat'];
+  const DOWN={mon:'Monday',tue:'Tuesday',wed:'Wednesday',thu:'Thursday',fri:'Friday',sat:'Saturday',sun:'Sunday'};
+  const dow=DOW[now.getDay()];
+  function localISO(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+  function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2200);}
+  function fmtDate(iso,end){if(!iso)return'';const d=new Date(iso+'T12:00');const o={month:'short',day:'numeric'};let s=d.toLocaleDateString(undefined,o);if(end&&end!==iso){const e=new Date(end+'T12:00');s+='–'+e.toLocaleDateString(undefined,e.getMonth()===d.getMonth()?{day:'numeric'}:o);}return s;}
+  const num=v=>{const n=parseFloat(v);return isFinite(n)?n:null;};
+  const nextEvent=()=>events.filter(e=>e.date>=today).sort((a,b)=>a.date.localeCompare(b.date))[0];
+  const daysUntil=iso=>Math.round((new Date(iso+'T12:00')-new Date(today+'T12:00'))/86400000);
+
+  // ---------- views ----------
+  function route(){
+    let v=(location.hash||'#today').replace('#','');
+    if(!['today','workout','practice','school','record'].includes(v))v='today';
+    document.querySelectorAll('.view').forEach(el=>el.hidden=el.id!=='v-'+v);
+    document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.v===v));
+    document.querySelector('header.top').hidden=(v==='workout');
+    $('#nav').hidden=(v==='workout');
+  }
+  window.addEventListener('hashchange',route);route();
+
+  // ---------- plan items ----------
+  // plans/workout and plans/practice: {days:{mon:[{t,d}],...}, focus:{mon:'...'}, gate:'', source:'', library:[{t,d,phase}]}
+  function itemsFor(plan,d){return (plan&&plan.days&&plan.days[d])||[];}
+  function checkRow(key,it,list,big){
+    const done=!!(day.checks&&day.checks[key]);
+    const el=document.createElement('label');el.className='check'+(done?' done':'');
+    el.innerHTML=`<input type="checkbox" ${done?'checked':''} ${canWrite?'':'disabled'}><div><div class="t">${esc(it.t)}</div>${it.d?'<div class="d">'+esc(it.d)+'</div>':''}</div>${big?'':'<div class="meta">'+esc(it.m||'')+'</div>'}`;
+    el.querySelector('input').onchange=async e=>{await setCheck(key,e.target.checked);};
+    list.appendChild(el);
+  }
+  async function setCheck(key,val){
+    if(!db)return;const checks=Object.assign({},day.checks||{});if(val)checks[key]=new Date().toISOString();else delete checks[key];
+    const d=Object.assign({},day,{checks,date:today});day=d;renderToday();renderWorkout();renderPractice();
+    try{await db.doc('days/'+today).set(d);}catch(err){toast('Could not save');}
+  }
+  function gateHtml(plan){return plan&&plan.gate?'<div class="gate">'+esc(plan.gate)+'</div>':'';}
+
+  // ---------- Today ----------
+  function renderToday(){
+    $('#td-day').textContent=now.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
+    const wo=plans.workout||{},pr=plans.practice||{};
+    $('#td-focus').textContent=[wo.focus&&wo.focus[dow],pr.focus&&pr.focus[dow]].filter(Boolean).join(' · ');
+    const ne=nextEvent();
+    $('#td-next').textContent=ne?ne.name:'—';
+    $('#td-next-note').textContent=ne?(daysUntil(ne.date)===0?'Today':daysUntil(ne.date)+' days · '+fmtDate(ne.date,ne.endDate))+(ne.registered==='Y'?' · registered':' · not registered'):'';
+    $('#td-rtp').textContent=profile.rtpPhase||'—';$('#td-rtp-note').textContent=profile.rtpNote||'';
+    const rounds=[];events.forEach(e=>[e.r1,e.r2,e.r3].forEach(r=>{const n=num(r);if(n)rounds.push(n);}));
+    $('#td-avg').textContent=rounds.length?(rounds.reduce((a,b)=>a+b,0)/rounds.length).toFixed(1):'—';$('#td-avg-note').textContent=rounds.length?rounds.length+' rounds · low '+Math.min(...rounds):'';
+    $('#td-streak').textContent=Object.values(weekDays).filter(d=>d.finished).length+'/7';
+    $('#td-gate').innerHTML=gateHtml(wo)+gateHtml(pr);
+    const woList=$('#td-workout');woList.innerHTML='';const woItems=itemsFor(wo,dow);woItems.forEach((it,i)=>checkRow('wo'+i,it,woList));
+    if(!woItems.length)woList.innerHTML='<div class="empty">No workout planned today.</div>';
+    const woDone=woItems.filter((_,i)=>day.checks&&day.checks['wo'+i]).length;$('#td-wo-count').textContent=woItems.length?woDone+'/'+woItems.length:'';$('#td-wo-bar').style.width=(woItems.length?100*woDone/woItems.length:0)+'%';
+    const prList=$('#td-practice');prList.innerHTML='';const prItems=itemsFor(pr,dow);prItems.forEach((it,i)=>checkRow('pr'+i,it,prList));
+    if(!prItems.length)prList.innerHTML='<div class="empty">No practice planned today.</div>';
+    const prDone=prItems.filter((_,i)=>day.checks&&day.checks['pr'+i]).length;$('#td-pr-count').textContent=prItems.length?prDone+'/'+prItems.length:'';
+    const rd=$('#td-reading');rd.innerHTML='';const rdItems=((plans.reading||{}).items)||[];rdItems.forEach((it,i)=>checkRow('rd'+i,it,rd));if(!rdItems.length)rd.innerHTML='<div class="empty">Add his current book and a mindset item in the Reading plan.</div>';
+    const sc=$('#td-school');sc.innerHTML='';const scItems=(((plans.school||{}).items)||[]).concat(day.extra||[]);scItems.forEach((it,i)=>checkRow('sc'+i,it,sc));if(!scItems.length)sc.innerHTML='<div class="empty">Nothing yet today.</div>';
+    $('#td-finish').disabled=!!day.finished;$('#td-finish').textContent=day.finished?'Finished ✓':'Finish today';
+    $('#td-note').value=day.note||'';
+    if(document.activeElement!==$('#td-hw'))$('#td-hw').value=day.hwMin||'';
+    const soon=(school.due||[]).filter(d=>d.date>=today&&daysUntil(d.date)<=7).sort((a,b)=>a.date.localeCompare(b.date));
+    $('#td-due').innerHTML=soon.length?'<div class="gate" style="background:var(--accent-soft);color:var(--accent);margin:12px 0 4px">Coming up: '+soon.map(d=>esc(fmtDate(d.date))+' · '+esc(d.t)+(d.subject?' ('+esc(d.subject)+')':'')).join(' · ')+'</div>':'';
+  }
+  $('#td-hw').onchange=async e=>{const v=num(e.target.value);const d=Object.assign({},day,{date:today,hwMin:v||0});day=d;try{await db.doc('days/'+today).set(d);toast('Saved');}catch(err){toast('Could not save');}};
+
+  // ---------- School ----------
+  const statusPill=s=>{const m={good:['Going well',''],watch:['Watch','warn'],help:['Needs help','crit']};const x=m[s]||[s||'',''];return x[0]?'<span class="pill '+x[1]+'">'+esc(x[0])+'</span>':'';};
+  function renderSchool(){
+    const wk=Object.values(weekDays).map(d=>num(d.hwMin)||0);const wkSum=wk.reduce((a,b)=>a+b,0);const wkDays=wk.filter(x=>x>0).length;
+    $('#sc-week').textContent=wkSum?wkSum:'—';$('#sc-avg').textContent=wkDays?Math.round(wkSum/wkDays):'—';
+    const subs=school.subjects||[];const help=subs.filter(s=>s.status==='help');
+    $('#sc-help').textContent=subs.length?help.length:'—';$('#sc-help-note').textContent=help.map(s=>s.name).join(', ')||(subs.length?'none flagged':'add subjects below');
+    const due=(school.due||[]).filter(d=>d.date>=today).sort((a,b)=>a.date.localeCompare(b.date));
+    $('#sc-next').textContent=due[0]?due[0].t:'—';$('#sc-next-note').textContent=due[0]?fmtDate(due[0].date)+(due[0].subject?' · '+due[0].subject:''):'';
+    const sb=$('#sc-subjects');sb.innerHTML='';subs.forEach(s=>{const tr=document.createElement('tr');tr.innerHTML=`<td><strong>${esc(s.name)}</strong></td><td>${statusPill(s.status)}</td><td>${esc(s.note||'')}</td>`;sb.appendChild(tr);});$('#sc-subjects-empty').hidden=subs.length>0;
+    const db2=$('#sc-due');db2.innerHTML='';due.forEach(d=>{const tr=document.createElement('tr');tr.className=daysUntil(d.date)<=2?'next':'';tr.innerHTML=`<td class="num">${esc(fmtDate(d.date))}</td><td>${esc(d.t)}</td><td>${esc(d.subject||'')}</td>`;db2.appendChild(tr);});$('#sc-due-empty').hidden=due.length>0;
+    const dd=$('#sc-days');dd.innerHTML='';Object.keys(recentDays).sort().reverse().forEach(k=>{const d=recentDays[k];if(!d.hwMin&&!d.note)return;const tr=document.createElement('tr');tr.innerHTML=`<td class="num">${esc(fmtDate(k))}</td><td class="num">${esc(d.hwMin||'')}</td><td>${esc(d.note||'')}</td>`;dd.appendChild(tr);});
+    $('#sc-notes').textContent=school.notes||'Nothing yet. Use Edit to add context the team should know: tutoring, a heavy week, what he is enjoying.';
+    $('#sc-source').textContent=school.updatedAt?'Updated '+fmtDate(school.updatedAt.slice(0,10)):'';$('#btn-edit-school').hidden=!canWrite;
+  }
+  function openSchoolForm(){
+    const f=$('#sc-form');f.hidden=false;
+    const subsTxt=(school.subjects||[]).map(s=>[s.name,s.status||'',s.note||''].join(' | ')).join('\n');
+    const dueTxt=(school.due||[]).map(d=>[d.date,d.t,d.subject||''].join(' | ')).join('\n');
+    f.innerHTML=`<label class="full">Subjects, one per line: Subject | good, watch or help | note<textarea id="scf-subjects" placeholder="Math | watch | long problem sets, slow start\nEnglish | good |">${esc(subsTxt)}</textarea></label>
+      <label class="full">Tests and due dates, one per line: YYYY-MM-DD | what | subject<textarea id="scf-due" placeholder="2026-11-12 | Chapter 4 test | Math">${esc(dueTxt)}</textarea></label>
+      <label class="full">Notes for the team<textarea id="scf-notes" style="font-family:var(--body);font-size:14px">${esc(school.notes||'')}</textarea></label>
+      <div class="actions"><button type="button" id="scf-cancel">Cancel</button><button class="primary" type="submit">Save</button></div>`;
+    $('#scf-cancel').onclick=()=>{f.hidden=true;};
+    f.onsubmit=async e=>{e.preventDefault();const split=s=>String(s||'').split('\n').map(x=>x.trim()).filter(Boolean).map(x=>x.split('|').map(y=>y.trim()));
+      const d={subjects:split($('#scf-subjects').value).map(a=>({name:a[0],status:(a[1]||'').toLowerCase(),note:a[2]||''})),due:split($('#scf-due').value).filter(a=>/^\d{4}-\d{2}-\d{2}$/.test(a[0])).map(a=>({date:a[0],t:a[1]||'',subject:a[2]||''})),notes:$('#scf-notes').value.trim(),updatedAt:new Date().toISOString()};
+      try{await db.doc('settings/school').set(d);f.hidden=true;toast('Saved');}catch(err){toast('Could not save');}};
+  }
+  $('#btn-edit-school').onclick=openSchoolForm;
+  $('#td-addform').onsubmit=async e=>{e.preventDefault();const t=$('#td-add-text').value.trim();if(!t)return;const d=Object.assign({},day,{date:today,extra:(day.extra||[]).concat([{t}])});day=d;$('#td-add-text').value='';renderToday();try{await db.doc('days/'+today).set(d);}catch(err){toast('Could not save');}};
+  $('#td-finish').onclick=async()=>{
+    if(!db)return;const wo=itemsFor(plans.workout,dow),pr=itemsFor(plans.practice,dow);const c=day.checks||{};
+    const woDone=wo.filter((_,i)=>c['wo'+i]).map(x=>x.t),prDone=pr.filter((_,i)=>c['pr'+i]).map(x=>x.t);
+    const note=$('#td-note').value.trim();
+    const text=`Workout ${woDone.length}/${wo.length}${woDone.length?': '+woDone.join(', '):''}\nPractice ${prDone.length}/${pr.length}${prDone.length?': '+prDone.join(', '):''}`+(day.hwMin?'\nHomework: '+day.hwMin+' min':'')+(note?'\nNote: '+note:'');
+    const d=Object.assign({},day,{date:today,finished:new Date().toISOString(),note});day=d;
+    try{await db.doc('days/'+today).set(d);await db.collection('log').add({date:today,category:'daily',author:'Seve',title:'Daily check-in',text,updatedAt:new Date().toISOString(),updatedBy:uid||''});toast('Day logged');renderToday();}catch(err){toast('Could not save');}
+  };
+
+  // ---------- Workout (TV) ----------
+  function renderWorkout(){
+    const wo=plans.workout||{};
+    $('#wo-day').textContent=now.toLocaleDateString(undefined,{weekday:'long'})+' workout';
+    $('#wo-focus').textContent=wo.focus&&wo.focus[dow]||'';
+    $('#wo-gate').innerHTML=gateHtml(wo);
+    const list=$('#wo-list');list.innerHTML='';const items=itemsFor(wo,dow);items.forEach((it,i)=>checkRow('wo'+i,it,list,true));
+    if(!items.length)list.innerHTML='<div class="empty">Rest day.</div>';
+    const done=items.filter((_,i)=>day.checks&&day.checks['wo'+i]).length;$('#wo-bar').style.width=(items.length?100*done/items.length:0)+'%';
+    $('#wo-source').textContent=wo.source||'';
+    $('#btn-edit-workout').hidden=!canWrite;
+    renderWeek($('#wo-week'),wo);
+  }
+  function renderWeek(box,plan){
+    box.innerHTML='';['mon','tue','wed','thu','fri','sat','sun'].forEach(d=>{const items=itemsFor(plan,d);const el=document.createElement('div');el.className='dayplan'+(d===dow?' today':'');el.innerHTML=`<h3>${DOWN[d]}${plan.focus&&plan.focus[d]?' · '+esc(plan.focus[d]):''}</h3>`+(items.length?'<ul>'+items.map(it=>'<li>'+esc(it.t)+(it.d?'<small>'+esc(it.d)+'</small>':'')+'</li>').join('')+'</ul>':'<div class="empty" style="padding:4px 0">Rest</div>');box.appendChild(el);});
+  }
+  // ---------- Practice ----------
+  function renderPractice(){
+    const pr=plans.practice||{};
+    $('#pr-day').textContent=now.toLocaleDateString(undefined,{weekday:'long'})+' practice';
+    $('#pr-focus').textContent=pr.focus&&pr.focus[dow]||'';
+    $('#pr-gate').innerHTML=gateHtml(pr);
+    const list=$('#pr-today');list.innerHTML='';const items=itemsFor(pr,dow);items.forEach((it,i)=>checkRow('pr'+i,it,list));if(!items.length)list.innerHTML='<div class="empty">No practice planned today.</div>';
+    $('#pr-source').textContent=pr.source||'';$('#btn-edit-practice').hidden=!canWrite;
+    renderWeek($('#pr-week'),pr);
+    const fa=$('#pr-focusareas');fa.innerHTML='';(pr.focusAreas||[]).forEach(f=>{const el=document.createElement('div');el.innerHTML=`<h3>${esc(f.t)}</h3><ul>${(f.items||[]).map(x=>'<li>'+esc(x)+'</li>').join('')}</ul>`;fa.appendChild(el);});
+    const lib=$('#pr-library');lib.innerHTML='';(pr.library||[]).forEach(g=>{const el=document.createElement('div');el.className='dayplan';el.innerHTML=`<h3>${esc(g.t)}</h3><ul>${(g.items||[]).map(it=>'<li>'+esc(it.t)+(it.d?'<small>'+esc(it.d)+'</small>':'')+'</li>').join('')}</ul>`;lib.appendChild(el);});
+  }
+  // ---------- plan editors ----------
+  const linesToItems=s=>String(s||'').split('\n').map(x=>x.trim()).filter(Boolean).map(x=>{const i=x.indexOf(' — ');return i>0?{t:x.slice(0,i).trim(),d:x.slice(i+3).trim()}:{t:x};});
+  const itemsToLines=a=>(a||[]).map(it=>it.t+(it.d?' — '+it.d:'')).join('\n');
+  function openPlanForm(kind){
+    const plan=plans[kind]||{days:{},focus:{}};const f=$(kind==='workout'?'#wo-form':'#pr-form');f.hidden=false;
+    f.innerHTML=`<label class="full">Gate / safety note (shown in orange)<input id="pf-gate" value="${esc(plan.gate||'')}"></label>
+      <label class="full">Source line<input id="pf-source" value="${esc(plan.source||'')}"></label>`+
+      ['mon','tue','wed','thu','fri','sat','sun'].map(d=>`<label class="full">${DOWN[d]} — focus<input id="pf-focus-${d}" value="${esc(plan.focus&&plan.focus[d]||'')}"></label><label class="full">${DOWN[d]} — items, one per line (Title — detail)<textarea id="pf-days-${d}">${esc(itemsToLines(plan.days&&plan.days[d]))}</textarea></label>`).join('')+
+      `<div class="actions"><button type="button" id="pf-cancel">Cancel</button><button class="primary" type="submit">Save plan</button></div>`;
+    f.scrollIntoView({block:'nearest'});
+    $('#pf-cancel').onclick=()=>{f.hidden=true;};
+    f.onsubmit=async e=>{e.preventDefault();const p=Object.assign({},plan);p.gate=$('#pf-gate').value.trim();p.source=$('#pf-source').value.trim();p.days={};p.focus={};['mon','tue','wed','thu','fri','sat','sun'].forEach(d=>{p.days[d]=linesToItems($('#pf-days-'+d).value);p.focus[d]=$('#pf-focus-'+d).value.trim();});p.updatedAt=new Date().toISOString();
+      try{await db.doc('plans/'+kind).set(p);f.hidden=true;toast('Plan saved');}catch(err){toast('Could not save');}};
+  }
+  $('#btn-edit-workout').onclick=()=>openPlanForm('workout');
+  $('#btn-edit-practice').onclick=()=>openPlanForm('practice');
+
+  // ---------- Record: summary ----------
+  function renderTiles(){
+    const rounds=[];events.forEach(e=>[e.r1,e.r2,e.r3].forEach(r=>{const n=num(r);if(n)rounds.push(n);}));
+    $('#t-avg').textContent=rounds.length?(rounds.reduce((a,b)=>a+b,0)/rounds.length).toFixed(1):'—';
+    $('#t-avg-note').textContent=rounds.length?rounds.length+' rounds · low '+Math.min(...rounds):'add round scores to compute';
+    $('#t-hcp').textContent=profile.handicap||'—';$('#t-hcp-note').textContent=profile.handicapAsOf?('as of '+profile.handicapAsOf):'tap Profile to set';
+    const next=nextEvent();$('#t-next').textContent=next?next.name:'—';
+    $('#t-next-note').textContent=next?(fmtDate(next.date,next.endDate)+' · '+(next.course||'')+(next.registered==='Y'?' · registered':' · not registered')):'';
+    $('#t-rtp').textContent=profile.rtpPhase||'—';$('#t-rtp-note').textContent=profile.rtpNote||'';
+  }
+  // ---------- events ----------
+  function renderEvents(){
+    const tb=$('#evbody');tb.innerHTML='';
+    const list=events.slice().sort((a,b)=>a.date.localeCompare(b.date)).filter(e=>evF==='all'||(evF==='upcoming'?e.date>=today:e.date<today));
+    $('#c-events').textContent=events.length?events.length+' events':'';$('#evempty').hidden=list.length>0;
+    const next=nextEvent();
+    list.forEach(e=>{const tr=document.createElement('tr');tr.className=(e.date<today?'past':'')+(next&&e.id===next.id?' next':'');
+      const reg=e.registered==='Y'?'<span class="pill">Registered</span>':(e.regOpens?'<span class="pill warn">Opens '+esc(e.regOpens)+'</span>':'<span class="pill gray">Not yet</span>');
+      const tot=[e.r1,e.r2,e.r3].map(num).filter(Boolean);
+      tr.innerHTML=`<td class="num">${esc(fmtDate(e.date,e.endDate))}</td><td><strong>${esc(e.name)}</strong>${e.notes?'<div style="font-size:12px;color:var(--muted)">'+esc(e.notes)+'</div>':''}</td><td>${esc(e.tour||'')}</td><td>${esc(e.course||'')}${e.location?'<div style="font-size:12px;color:var(--muted)">'+esc(e.location)+'</div>':''}</td><td>${reg}</td><td class="num">${esc(e.r1||'')}</td><td class="num">${esc(e.r2||'')}</td><td class="num">${esc(e.r3||'')}</td><td class="num">${tot.length?tot.reduce((a,b)=>a+b,0):''}</td><td class="num">${esc(e.place||'')}</td><td>${canWrite?'<button class="small ghost" data-edit-ev="'+esc(e.id)+'">Edit</button>':''}</td>`;tb.appendChild(tr);});
+    tb.querySelectorAll('[data-edit-ev]').forEach(b=>b.onclick=()=>openEventForm(events.find(x=>x.id===b.dataset.editEv)));
+  }
+  function openEventForm(e){
+    e=e||{};const f=$('#evform');f.hidden=false;
+    f.innerHTML=`<label>Tournament<input name="name" id="ev-name" required value="${esc(e.name)}"></label>
+      <label>Tour<select name="tour" id="ev-tour">${['JTNC','PBJGA','US Kids','AJGA','Club','Other'].map(t=>`<option ${e.tour===t?'selected':''}>${t}</option>`).join('')}</select></label>
+      <label>Start date<input type="date" name="date" id="ev-date" required value="${esc(e.date||'')}"></label>
+      <label>End date<input type="date" name="endDate" id="ev-end" value="${esc(e.endDate||'')}"></label>
+      <label>Course<input name="course" id="ev-course" value="${esc(e.course)}"></label>
+      <label>Location<input name="location" id="ev-loc" value="${esc(e.location)}"></label>
+      <label>Registered<select name="registered" id="ev-reg"><option value="N" ${e.registered!=='Y'?'selected':''}>No</option><option value="Y" ${e.registered==='Y'?'selected':''}>Yes</option></select></label>
+      <label>Registration opens<input name="regOpens" id="ev-regopens" value="${esc(e.regOpens)}"></label>
+      <label>Round 1<input name="r1" id="ev-r1" inputmode="numeric" value="${esc(e.r1)}"></label>
+      <label>Round 2<input name="r2" id="ev-r2" inputmode="numeric" value="${esc(e.r2)}"></label>
+      <label>Round 3<input name="r3" id="ev-r3" inputmode="numeric" value="${esc(e.r3)}"></label>
+      <label>Place<input name="place" id="ev-place" value="${esc(e.place)}"></label>
+      <label class="full">Notes<input name="notes" id="ev-notes" value="${esc(e.notes)}"></label>
+      <div class="actions">${e.id?'<button type="button" class="ghost" id="ev-del">Delete</button>':''}<button type="button" id="ev-cancel">Cancel</button><button class="primary" type="submit">Save</button></div>`;
+    f.scrollIntoView({block:'nearest'});$('#ev-cancel').onclick=()=>{f.hidden=true;};
+    const del=$('#ev-del');if(del)del.onclick=async()=>{if(del.textContent!=='Confirm delete'){del.textContent='Confirm delete';return;}await db.doc('events/'+e.id).delete();f.hidden=true;toast('Deleted');};
+    f.onsubmit=async ev=>{ev.preventDefault();const d={};new FormData(f).forEach((v,k)=>d[k]=String(v).trim());d.updatedAt=new Date().toISOString();d.updatedBy=uid||'';
+      try{if(e.id){await db.doc('events/'+e.id).set(d);}else{await db.collection('events').add(d);}f.hidden=true;toast('Saved');}catch(err){toast(err&&err.code==='invalid_argument'?'You do not have edit access.':'Could not save');}};
+  }
+  // ---------- log ----------
+  const catLabel={golf:'Golf / swing',tournament:'Tournament review',fitness:'Fitness',recovery:'Recovery',mindset:'Mindset',daily:'Daily check-in',school:'School',admin:'Admin'};
+  async function renderLog(){
+    const box=$('#logbody');box.innerHTML='';
+    const list=log.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')).filter(l=>logF==='all'||l.category===logF);
+    $('#c-log').textContent=log.length?log.length+' entries':'';$('#logempty').hidden=list.length>0;
+    let names={};if(user&&user.profiles){try{names=await user.profiles([...new Set(list.map(l=>l.updatedBy).filter(Boolean))])||{};}catch(e){}}
+    list.forEach(l=>{const d=document.createElement('div');d.className='entry';const who=l.author||(names[l.updatedBy]&&names[l.updatedBy].name)||'';
+      d.innerHTML=`<div class="when">${esc(fmtDate(l.date))}</div><div><div class="cat cat-${esc(l.category)}">${esc(catLabel[l.category]||l.category)}</div><div class="ttl">${esc(l.title)}</div><div class="txt">${esc(l.text)}</div>${who?'<div class="by">'+esc(who)+'</div>':''}${canWrite?'<div class="acts"><button class="small ghost" data-edit-log="'+esc(l.id)+'">Edit</button></div>':''}</div>`;box.appendChild(d);});
+    box.querySelectorAll('[data-edit-log]').forEach(b=>b.onclick=()=>openLogForm(log.find(x=>x.id===b.dataset.editLog)));
+  }
+  function openLogForm(l){
+    l=l||{};const f=$('#logform');f.hidden=false;
+    f.innerHTML=`<label>Date<input type="date" name="date" id="lg-date" required value="${esc(l.date||today)}"></label>
+      <label>Category<select name="category" id="lg-cat">${Object.keys(catLabel).map(k=>`<option value="${k}" ${l.category===k?'selected':''}>${catLabel[k]}</option>`).join('')}</select></label>
+      <label>Logged by<input name="author" id="lg-author" placeholder="Your name" value="${esc(l.author)}"></label>
+      <label class="full">Title<input name="title" id="lg-title" required value="${esc(l.title)}"></label>
+      <label class="full">Notes<textarea name="text" id="lg-text" style="font-family:var(--body);font-size:14px">${esc(l.text)}</textarea></label>
+      <div class="actions">${l.id?'<button type="button" class="ghost" id="lg-del">Delete</button>':''}<button type="button" id="lg-cancel">Cancel</button><button class="primary" type="submit">Save</button></div>`;
+    f.scrollIntoView({block:'nearest'});$('#lg-cancel').onclick=()=>{f.hidden=true;};
+    const del=$('#lg-del');if(del)del.onclick=async()=>{if(del.textContent!=='Confirm delete'){del.textContent='Confirm delete';return;}await db.doc('log/'+l.id).delete();f.hidden=true;toast('Deleted');};
+    f.onsubmit=async ev=>{ev.preventDefault();const d={};new FormData(f).forEach((v,k)=>d[k]=String(v).trim());d.updatedAt=new Date().toISOString();d.updatedBy=uid||'';
+      try{if(l.id){await db.doc('log/'+l.id).set(d);}else{await db.collection('log').add(d);}f.hidden=true;toast('Saved');}catch(err){toast(err&&err.code==='invalid_argument'?'You do not have edit access.':'Could not save');}};
+  }
+  // ---------- team ----------
+  function renderTeam(){
+    const box=$('#teambody');box.innerHTML='';$('#c-team').textContent=team.length?team.length+' people':'';
+    team.slice().sort((a,b)=>(a.order||99)-(b.order||99)).forEach(m=>{const d=document.createElement('div');d.className='member';
+      d.innerHTML=`<div class="nm">${esc(m.name)}</div><div class="role">${esc(m.role)}${m.org?' · '+esc(m.org):''}</div>${m.focus?'<div style="font-size:13px;margin-top:4px">'+esc(m.focus)+'</div>':''}${m.contact?'<div class="ct">'+esc(m.contact)+'</div>':''}${canWrite?'<div class="acts" style="margin-top:8px"><button class="small ghost" data-edit-tm="'+esc(m.id)+'">Edit</button></div>':''}`;box.appendChild(d);});
+    box.querySelectorAll('[data-edit-tm]').forEach(b=>b.onclick=()=>openTeamForm(team.find(x=>x.id===b.dataset.editTm)));
+  }
+  function openTeamForm(m){
+    m=m||{};const f=$('#teamform');f.hidden=false;
+    f.innerHTML=`<label>Name<input name="name" id="tm-name" required value="${esc(m.name)}"></label><label>Role<input name="role" id="tm-role" value="${esc(m.role)}"></label><label>Organization<input name="org" id="tm-org" value="${esc(m.org)}"></label><label>Contact<input name="contact" id="tm-contact" value="${esc(m.contact)}"></label><label class="full">Focus / cadence<input name="focus" id="tm-focus" value="${esc(m.focus)}"></label><label>Sort order<input name="order" id="tm-order" inputmode="numeric" value="${esc(m.order||'')}"></label>
+      <div class="actions">${m.id?'<button type="button" class="ghost" id="tm-del">Remove</button>':''}<button type="button" id="tm-cancel">Cancel</button><button class="primary" type="submit">Save</button></div>`;
+    $('#tm-cancel').onclick=()=>{f.hidden=true;};
+    const del=$('#tm-del');if(del)del.onclick=async()=>{if(del.textContent!=='Confirm remove'){del.textContent='Confirm remove';return;}await db.doc('team/'+m.id).delete();f.hidden=true;};
+    f.onsubmit=async ev=>{ev.preventDefault();const d={};new FormData(f).forEach((v,k)=>d[k]=String(v).trim());d.order=num(d.order)||99;try{if(m.id){await db.doc('team/'+m.id).set(d);}else{await db.collection('team').add(d);}f.hidden=true;toast('Saved');}catch(err){toast('Could not save');}};
+  }
+  // ---------- profile ----------
+  function lines(s){return String(s||'').split('\n').map(x=>x.trim()).filter(Boolean);}
+  function renderProfile(){
+    const p=profile;const box=$('#profbody');
+    const li=arr=>arr.length?'<ul>'+arr.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':'<div class="empty" style="padding:4px 0">Not set</div>';
+    const linkli=arr=>arr.length?'<ul class="links">'+arr.map(x=>{const i=x.indexOf('|');const t=i>0?x.slice(0,i).trim():x;const u=i>0?x.slice(i+1).trim():'';return'<li>'+(u?'<a href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(t)+'</a>':esc(t))+'</li>';}).join('')+'</ul>':'<div class="empty" style="padding:4px 0">None yet</div>';
+    box.innerHTML=`<div><h3>Player</h3>${li(lines(p.bio))}</div><div><h3>Season goals</h3>${li(lines(p.goals))}</div><div><h3>Current priorities (90 days)</h3>${li(lines(p.priorities))}</div><div><h3>Metrics we track</h3>${li(lines(p.metrics))}</div><div><h3>Weekly rhythm</h3>${li(lines(p.rhythm))}</div><div><h3>Resources &amp; source docs</h3>${linkli(lines(p.links))}</div>`;
+  }
+  function openProfileForm(){
+    const p=profile;const f=$('#profform');f.hidden=false;
+    const ta=(k,lab,ph)=>`<label class="full">${lab}<textarea name="${k}" id="pf-${k}" style="font-family:var(--body);font-size:14px" placeholder="${ph||'One per line'}">${esc(p[k]||'')}</textarea></label>`;
+    f.innerHTML=`<label>Handicap<input name="handicap" id="pf-hcp" value="${esc(p.handicap||'')}"></label><label>Handicap as of<input name="handicapAsOf" id="pf-hcpdate" value="${esc(p.handicapAsOf||'')}"></label><label>Return-to-play phase<input name="rtpPhase" id="pf-rtp" value="${esc(p.rtpPhase||'')}"></label><label>Return-to-play note<input name="rtpNote" id="pf-rtpnote" value="${esc(p.rtpNote||'')}"></label>
+      ${ta('bio','Player')}${ta('goals','Season goals')}${ta('priorities','Current priorities (90 days)')}${ta('metrics','Metrics we track')}${ta('rhythm','Weekly rhythm')}${ta('links','Resources (Title | https://…)','Title | URL, one per line')}
+      <div class="actions"><button type="button" id="pf-cancel2">Cancel</button><button class="primary" type="submit">Save</button></div>`;
+    $('#pf-cancel2').onclick=()=>{f.hidden=true;};
+    f.onsubmit=async ev=>{ev.preventDefault();const d={};new FormData(f).forEach((v,k)=>d[k]=String(v));try{await db.doc('settings/profile').set(d);f.hidden=true;toast('Saved');}catch(err){toast('Could not save');}};
+  }
+
+  // ---------- wiring ----------
+  $('#btn-add-event').onclick=()=>openEventForm();$('#btn-add-log').onclick=()=>openLogForm();$('#btn-add-member').onclick=()=>openTeamForm();$('#btn-edit-profile').onclick=()=>openProfileForm();
+  document.querySelectorAll('#evfilter .chip').forEach(c=>c.onclick=()=>{evF=c.dataset.f;document.querySelectorAll('#evfilter .chip').forEach(x=>x.classList.toggle('on',x===c));renderEvents();});
+  document.querySelectorAll('#logfilter .chip').forEach(c=>c.onclick=()=>{logF=c.dataset.f;document.querySelectorAll('#logfilter .chip').forEach(x=>x.classList.toggle('on',x===c));renderLog();});
+  ['sec-schedule','sec-log','sec-team','sec-profile'].forEach(id=>{const el=document.getElementById(id);try{const v=localStorage.getItem('open:'+id);if(v!==null)el.open=v==='1';}catch(e){}el.addEventListener('toggle',()=>{try{localStorage.setItem('open:'+id,el.open?'1':'0');}catch(e){}});});
+  function setWrite(w){canWrite=w;document.querySelectorAll('#btn-add-event,#btn-add-log,#btn-add-member,#btn-edit-profile,#td-addform,#td-finish,#btn-edit-school').forEach(b=>b.hidden=!w);$('#td-hw').disabled=!w;}
+  function renderAll(){renderToday();renderWorkout();renderPractice();renderSchool();renderTiles();renderEvents();renderLog();renderTeam();renderProfile();}
+
+  // Static site build: data.json is the published record; daily check-offs live in this browser.
+  let snapAt='';
+  const LS=k=>{try{return JSON.parse(localStorage.getItem('portal:'+k)||'null');}catch(e){return null;}};
+  const LSset=(k,v)=>{try{localStorage.setItem('portal:'+k,JSON.stringify(v));}catch(e){}};
+  db={doc:p=>({set:async d=>{if(!p.startsWith('days/'))throw new Error('read-only');LSset(p,d);reloadDays();},delete:async()=>{throw new Error('read-only');}}),
+      collection:c=>({add:async d=>{if(c!=='log')throw new Error('read-only');const k='localLog';LSset(k,(LS(k)||[]).concat([d]));}})};
+  function reloadDays(){weekDays={};recentDays={};const mon=new Date(now);mon.setDate(now.getDate()-((now.getDay()+6)%7));const back=new Date(now);back.setDate(now.getDate()-13);
+    for(let i=0;i<7;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);const k=localISO(d);const v=LS('days/'+k);if(v)weekDays[k]=v;}
+    for(let i=0;i<14;i++){const d=new Date(back);d.setDate(back.getDate()+i);const k=localISO(d);const v=LS('days/'+k);if(v)recentDays[k]=v;}
+    day=weekDays[today]||{};}
+  const applySnap=sn=>{snapAt=sn.publishedAt||'';events=sn.events||[];log=sn.log||[];team=sn.team||[];profile=sn.profile||{};school=sn.school||{};plans=sn.plans||{};};
+  try{applySnap(JSON.parse(document.getElementById('snap').textContent));}catch(e){}
+  const snapLabel=()=>{if(!snapAt)return 'Published record';const d=new Date(snapAt);return 'Updated '+d.toLocaleDateString(undefined,{month:'short',day:'numeric'});};
+  canWrite=true;reloadDays();renderAll();
+  const hideEditors=()=>document.querySelectorAll('#btn-add-event,#btn-add-log,#btn-add-member,#btn-edit-profile,#btn-edit-school,#btn-edit-workout,#btn-edit-practice').forEach(b=>b.hidden=true);
+  hideEditors();$('#status').textContent=snapLabel();
+  fetch('data.json?t='+Date.now()).then(r=>r.json()).then(sn=>{applySnap(sn);renderAll();hideEditors();$('#status').textContent=snapLabel();}).catch(()=>{});
+  new MutationObserver(hideEditors).observe(document.body,{childList:true,subtree:true});
+})();
+</script>
