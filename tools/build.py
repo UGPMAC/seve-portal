@@ -52,7 +52,7 @@ if __name__ == '__main__':
         if d.is_dir() and (d/'data.json').exists():
             built.append((d.name,)+build(d))
     # landing page
-    cards = '\n'.join(f'<a class="card" href="{slug}/">' + (f'<img class="ph" src="{slug}/{photo}" alt="">' if photo and not photo.startswith('data:') else '<div class="ph blank"></div>') + f'<div><div class="eyebrow">{kind}</div><h2>{name}</h2><p>Today · Workout · Practice · Swing · Journal · Record</p></div></a>' for slug,name,kind,photo in built)
+    cards = '\n'.join(f'<a class="card" href="{slug}/">' + (f'<img class="ph" src="{slug}/{photo}" alt="">' if photo and not photo.startswith('data:') else '<div class="ph blank"></div>') + f'<div><div class="eyebrow">{kind}</div><h2>{name}</h2><p>Today · Workout · Practice · Swing · Journal · Season · Team</p></div></a>' for slug,name,kind,photo in built)
     (root/'index.html').write_text(f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>UGP Juniors</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>:root{{--accent:#1a6b3c;--bg:#f6f7f5;--fg:#111;--muted:#5c6660;--line:#e3e6e2}}body{{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--fg)}}

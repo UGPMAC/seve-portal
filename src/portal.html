@@ -145,7 +145,8 @@ form.edit .actions{grid-column:1/-1;display:flex;gap:8px;justify-content:flex-en
     <a href="#swing" data-v="swing">Swing</a>
     <a href="#journal" data-v="journal">Journal</a>
     <a href="#school" data-v="school">School</a>
-    <a href="#record" data-v="record">Record</a>
+    <a href="#record" data-v="record">Season</a>
+    <a href="#team" data-v="team">Team</a>
   </nav>
 
   <!-- ===== TODAY ===== -->
@@ -246,7 +247,7 @@ form.edit .actions{grid-column:1/-1;display:flex;gap:8px;justify-content:flex-en
     <section class="block"><div class="blockhead"><span>Notes for the team</span></div><div class="body"><div class="hint" id="sc-notes" style="white-space:pre-wrap;color:var(--fg);font-size:15px;padding-top:12px"></div></div></section>
   </div>
 
-  <!-- ===== RECORD (team) ===== -->
+  <!-- ===== SEASON ===== -->
   <div class="view" id="v-record" hidden>
     <div class="tiles">
       <div class="tile"><div class="lab">Scoring average</div><div class="val" id="t-avg">—</div><div class="note" id="t-avg-note">from completed tournament rounds</div></div>
@@ -280,6 +281,11 @@ form.edit .actions{grid-column:1/-1;display:flex;gap:8px;justify-content:flex-en
       </div>
     </details>
 
+  </div>
+
+  <!-- ===== TEAM ===== -->
+  <div class="view" id="v-team" hidden>
+    <div class="today-head"><div class="day">Team</div><div class="focus">Who is working with him, what they have written, and what we are aiming at.</div></div>
     <details class="block" open id="sec-log">
       <summary class="blockhead"><span>Development log <span class="count" id="c-log"></span></span><span class="chev">›</span></summary>
       <div class="body">
@@ -294,7 +300,7 @@ form.edit .actions{grid-column:1/-1;display:flex;gap:8px;justify-content:flex-en
       </div>
     </details>
 
-    <details class="block" id="sec-team">
+    <details class="block" open id="sec-team">
       <summary class="blockhead"><span>Team <span class="count" id="c-team"></span></span><span class="chev">›</span></summary>
       <div class="body">
         <div class="toolbar"><div class="spacer"></div><button id="btn-add-member">+ Add team member</button></div>
@@ -303,7 +309,7 @@ form.edit .actions{grid-column:1/-1;display:flex;gap:8px;justify-content:flex-en
       </div>
     </details>
 
-    <details class="block" id="sec-profile">
+    <details class="block" open id="sec-profile">
       <summary class="blockhead"><span>Player profile, goals &amp; resources</span><span class="chev">›</span></summary>
       <div class="body">
         <div class="toolbar"><div class="spacer"></div><button id="btn-edit-profile">Edit profile</button></div>
@@ -337,7 +343,7 @@ form.edit .actions{grid-column:1/-1;display:flex;gap:8px;justify-content:flex-en
   // ---------- views ----------
   function route(){
     let v=(location.hash||'#today').replace('#','');
-    if(!['today','workout','practice','swing','journal','school','record','card'].includes(v))v='today';if(v==='school'&&profile.kind==='adult')v='today';
+    if(v==='season')v='record';if(!['today','workout','practice','swing','journal','school','record','team','card'].includes(v))v='today';if(v==='school'&&profile.kind==='adult')v='today';
     document.querySelectorAll('.view').forEach(el=>el.hidden=el.id!=='v-'+v);
     document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.v===v));
     document.querySelector('header.top').hidden=(v==='workout');
@@ -600,7 +606,7 @@ form.edit .actions{grid-column:1/-1;display:flex;gap:8px;justify-content:flex-en
       const tot=[e.r1,e.r2,e.r3].map(num).filter(Boolean);
       tr.innerHTML=`<td class="num">${esc(fmtDate(e.date,e.endDate))}</td><td><strong>${esc(e.name)}</strong>${e.notes?'<div style="font-size:12px;color:var(--muted)">'+esc(e.notes)+'</div>':''}</td><td>${esc(e.tour||'')}</td><td>${esc(e.course||'')}${e.location?'<div style="font-size:12px;color:var(--muted)">'+esc(e.location)+'</div>':''}</td><td>${reg}</td><td class="num">${esc(e.r1||'')}</td><td class="num">${esc(e.r2||'')}</td><td class="num">${esc(e.r3||'')}</td><td class="num">${tot.length?tot.reduce((a,b)=>a+b,0):''}</td><td class="num">${esc(e.place||'')}</td><td style="white-space:nowrap">${canWrite?'<button class="small ghost" data-edit-ev="'+esc(e.id)+'">Edit</button>'+(e.date<=today&&e.reviewed!=='Y'&&tot.length?' <button class="small" data-review-ev="'+esc(e.id)+'">Review</button>':''):''}</td>`;tb.appendChild(tr);});
     tb.querySelectorAll('[data-edit-ev]').forEach(b=>b.onclick=()=>openEventForm(events.find(x=>x.id===b.dataset.editEv)));
-    tb.querySelectorAll('[data-review-ev]').forEach(b=>b.onclick=()=>{$('#sec-log').open=true;openReviewForm(events.find(x=>x.id===b.dataset.reviewEv));});
+    tb.querySelectorAll('[data-review-ev]').forEach(b=>b.onclick=()=>{location.hash='team';$('#sec-log').open=true;openReviewForm(events.find(x=>x.id===b.dataset.reviewEv));});
   }
   function openEventForm(e){
     e=e||{};const f=$('#evform');f.hidden=false;
