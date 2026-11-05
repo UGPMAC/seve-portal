@@ -18,11 +18,11 @@ NEW_BOOT = r"""  // Static site build: data.json is the published record; daily 
     for(let i=0;i<7;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);const k=localISO(d);const v=LS('days/'+k);if(v)weekDays[k]=v;}
     for(let i=0;i<14;i++){const d=new Date(back);d.setDate(back.getDate()+i);const k=localISO(d);const v=LS('days/'+k);if(v)recentDays[k]=v;}
     day=weekDays[today]||{};}
-  const applySnap=sn=>{snapAt=sn.publishedAt||'';events=sn.events||[];log=sn.log||[];team=sn.team||[];profile=sn.profile||{};school=sn.school||{};plans=sn.plans||{};};
+  const applySnap=sn=>{snapAt=sn.publishedAt||'';events=sn.events||[];log=sn.log||[];team=sn.team||[];profile=sn.profile||{};school=sn.school||{};plans=sn.plans||{};swing=sn.swing||{};journal=sn.journal||{};notes=sn.notes||{};stats=sn.stats||[];};
   try{applySnap(JSON.parse(document.getElementById('snap').textContent));}catch(e){}
   const snapLabel=()=>{if(!snapAt)return 'Published record';const d=new Date(snapAt);return 'Updated '+d.toLocaleDateString(undefined,{month:'short',day:'numeric'});};
   canWrite=true;reloadDays();renderAll();
-  const hideEditors=()=>document.querySelectorAll('#btn-add-event,#btn-add-log,#btn-add-member,#btn-edit-profile,#btn-edit-school,#btn-edit-workout,#btn-edit-practice').forEach(b=>b.hidden=true);
+  const hideEditors=()=>document.querySelectorAll('#btn-add-event,#btn-add-log,#btn-add-member,#btn-edit-profile,#btn-edit-school,#btn-edit-workout,#btn-edit-practice,#btn-edit-swing,#btn-add-note,#btn-add-stat,[data-edit-ev],[data-edit-log],[data-edit-tm],[data-edit-st],[data-review-ev]').forEach(b=>b.hidden=true);
   hideEditors();$('#status').textContent=snapLabel();
   fetch('data.json?t='+Date.now()).then(r=>r.json()).then(sn=>{applySnap(sn);renderAll();hideEditors();$('#status').textContent=snapLabel();}).catch(()=>{});
   new MutationObserver(hideEditors).observe(document.body,{childList:true,subtree:true});
@@ -40,16 +40,18 @@ def build(athlete_dir: pathlib.Path):
     if not html.lstrip().lower().startswith('<!doctype'):
         html = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' + html
     (athlete_dir/'index.html').write_text(html)
-    name = data.get('profile',{}).get('bio','').split(',')[0] or athlete_dir.name
-    return name
+    prof = data.get('profile',{})
+    name = prof.get('name') or prof.get('bio','').split(',')[0] or athlete_dir.name
+    kind = 'Player' if prof.get('kind')=='adult' else 'Student athlete'
+    return name, kind
 
 if __name__ == '__main__':
     built = []
     for d in sorted(root.iterdir()):
         if d.is_dir() and (d/'data.json').exists():
-            built.append((d.name, build(d)))
+            built.append((d.name,)+build(d))
     # landing page
-    cards = '\n'.join(f'<a class="card" href="{slug}/"><div class="eyebrow">Student athlete</div><h2>{name}</h2><p>Today · Workout · Practice · School · Record</p></a>' for slug,name in built)
+    cards = '\n'.join(f'<a class="card" href="{slug}/"><div class="eyebrow">{kind}</div><h2>{name}</h2><p>Today · Workout · Practice · Swing · Journal · Record</p></a>' for slug,name,kind in built)
     (root/'index.html').write_text(f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>UGP Juniors</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>:root{{--accent:#1a6b3c;--bg:#f6f7f5;--fg:#111;--muted:#5c6660;--line:#e3e6e2}}body{{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--fg)}}

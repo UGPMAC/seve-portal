@@ -1,0 +1,709 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Seve Todd Portal</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Source+Sans+3:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: Seve's student-athlete home base. Four views on a hash: Today (daily brief + checklist), Workout (TV screen), Practice (drill library), Record (team's development record). */
+:root{
+  --bg:#f7f8f6; --surface:#ffffff; --fg:#14201a; --muted:#5f6b64; --line:#dde3de;
+  --accent:#0f5c3a; --accent-fg:#ffffff; --accent-soft:#e3efe8;
+  --good:#1f7a3f; --warn:#b06a00; --warn-soft:#fff3df; --crit:#a3302a; --crit-soft:#fbe7e5;
+  --display:"Archivo",system-ui,sans-serif; --body:"Source Sans 3",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0f1512;--surface:#171f1a;--fg:#eef3ef;--muted:#9aa89f;--line:#2a3730;--accent:#4fc08a;--accent-fg:#0b1a12;--accent-soft:#193126;--good:#5fd08f;--warn:#f0b357;--warn-soft:#3a2a10;--crit:#ff8a80;--crit-soft:#3d1a18;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1512;--surface:#171f1a;--fg:#eef3ef;--muted:#9aa89f;--line:#2a3730;--accent:#4fc08a;--accent-fg:#0b1a12;--accent-soft:#193126;--good:#5fd08f;--warn:#f0b357;--warn-soft:#3a2a10;--crit:#ff8a80;--crit-soft:#3d1a18;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.45;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+.wrap{max-width:1040px;margin:0 auto}
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;padding-block:24px 14px;border-bottom:2px solid var(--accent)}
+.brand{font-family:var(--display);font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:12px;color:var(--accent)}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,40px);margin:4px 0 0;line-height:1.05;text-wrap:balance}
+.sub{color:var(--muted);margin-top:6px}
+.status{font-size:13px;color:var(--muted)}
+nav.views{display:flex;gap:6px;flex-wrap:wrap;padding-block:14px 4px}
+nav.views a{font-family:var(--display);font-weight:700;font-size:14px;letter-spacing:.04em;text-transform:uppercase;text-decoration:none;color:var(--muted);padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface)}
+nav.views a.on{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.view[hidden],[hidden]{display:none!important}
+.videos{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));margin-top:16px}.video{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}.video iframe{width:100%;aspect-ratio:16/9;border:0;display:block;background:#000}.video .meta{padding:12px 14px}.video .meta .ttl{font-weight:700}.video .meta .by{font-size:13px;color:var(--muted)}.video .meta .nt{font-size:14px;margin-top:6px;white-space:pre-wrap}.notes{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));margin:14px 0}.cnote{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:10px 12px}.cnote .who{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em}.cnote .tx{font-size:15px;margin-top:4px;white-space:pre-wrap}.cnote.single{margin:12px 0}.stat{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}.stat .lb{font-weight:600}.stat .vals{font-family:var(--mono,monospace);color:var(--muted);font-size:13px}.stat .cur{font-weight:700;font-size:18px;margin-left:8px}.cue{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;background:var(--line);margin-left:6px}.card{max-width:720px;margin:0 auto;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px}.card h2{font-family:var(--display);font-size:30px;margin:0 0 4px}.card .meta{color:var(--muted);margin-bottom:18px}.card h4{margin:18px 0 6px;font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--accent)}.card ul{margin:0;padding-left:18px}.card .cue-big{font-family:var(--display);font-size:22px;font-weight:700;margin-top:6px}.review{display:grid;gap:4px}.review b{color:var(--accent)}@media print{header.top,nav.views,.toolbar,button{display:none!important}.view[hidden]{display:none}body{background:#fff}}
+.mood{display:inline-block;min-width:28px;text-align:center;border-radius:6px;padding:2px 6px;font-weight:700;background:var(--line);margin-right:8px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:18px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;min-width:0}
+.tile .lab{font-family:var(--display);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.tile .val{font-family:var(--display);font-weight:700;font-size:30px;margin-top:4px;font-variant-numeric:tabular-nums;line-height:1}
+.tile .note{font-size:13px;color:var(--muted);margin-top:6px}
+section.block{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.blockhead{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;font-family:var(--display);font-weight:700;font-size:17px}
+.blockhead::-webkit-details-marker{display:none}
+.blockhead .count{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:400}
+.blockhead .chev{transition:transform .2s;color:var(--muted)}
+details[open] .blockhead .chev{transform:rotate(90deg)}
+.body{padding:0 18px 18px;border-top:1px solid var(--line)}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-block:14px 10px}
+.toolbar .spacer{flex:1}
+button,.btn{font:inherit;font-family:var(--body);font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--fg);border-radius:8px;padding:8px 14px;cursor:pointer;text-decoration:none;display:inline-block}
+button.primary,.btn.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+button.small{padding:4px 10px;font-size:13px}
+button.ghost{border-color:transparent;color:var(--muted)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:13px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--surface);cursor:pointer}
+.chip.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.tablewrap{overflow-x:auto;min-width:0}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{text-align:left;font-family:var(--display);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.past td{color:var(--muted)}
+tr.next td{background:var(--accent-soft)}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.gray{background:var(--bg);color:var(--muted);border:1px solid var(--line)}
+.log{display:grid;gap:10px}
+.entry{display:grid;grid-template-columns:92px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.entry:last-child{border-bottom:0}
+.entry .when{font-family:var(--mono);font-size:12px;color:var(--muted);padding-top:3px}
+.entry .cat{font-family:var(--display);font-size:11px;letter-spacing:.08em;text-transform:uppercase}
+.entry .ttl{font-weight:600;margin-top:2px}
+.entry .txt{white-space:pre-wrap;margin-top:3px;max-width:68ch}
+.entry .by{font-size:12px;color:var(--muted);margin-top:4px}
+.entry .acts{margin-top:6px;display:flex;gap:6px}
+.cat-golf{color:var(--accent)}.cat-fitness{color:#1f5fa8}.cat-recovery{color:var(--warn)}.cat-mindset{color:#7a3fa0}.cat-tournament{color:var(--good)}.cat-admin{color:var(--muted)}.cat-daily{color:var(--muted)}.cat-journal{color:#7a3fa0}.cat-school{color:#1f5fa8}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .cat-fitness,:root:not([data-theme="light"]) .cat-school{color:#7fb3ff}:root:not([data-theme="light"]) .cat-mindset{color:#c99cf0}}
+:root[data-theme="dark"] .cat-fitness,:root[data-theme="dark"] .cat-school{color:#7fb3ff}:root[data-theme="dark"] .cat-mindset{color:#c99cf0}
+.team{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;padding-top:14px}
+.member{border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}
+.member .nm{font-weight:600}
+.member .role{color:var(--muted);font-size:14px}
+.member .ct{font-family:var(--mono);font-size:12px;margin-top:6px;word-break:break-all}
+.profile{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;padding-top:14px}
+.profile h3,.plan h3{font-family:var(--display);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+.profile ul{margin:0;padding-left:18px}
+.profile li{margin:3px 0}
+form.edit{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;padding:14px;border:1px dashed var(--line);border-radius:10px;margin-top:10px;background:var(--bg)}
+form.edit label{display:grid;gap:4px;font-size:12px;color:var(--muted);font-weight:600;min-width:0}
+form.edit input,form.edit select,form.edit textarea{font:inherit;font-size:14px;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--fg);min-width:0;width:100%}
+form.edit textarea{min-height:80px;resize:vertical;font-family:var(--mono);font-size:13px}
+form.edit .full{grid-column:1/-1}
+form.edit .actions{grid-column:1/-1;display:flex;gap:8px;justify-content:flex-end}
+.empty{color:var(--muted);padding:18px 0;font-size:14px}
+.links a{color:var(--accent);font-weight:600}
+.hint{font-size:13px;color:var(--muted);padding-top:10px}
+.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:8px 14px;border-radius:8px;font-size:14px;z-index:20}
+/* Today + checklist */
+.today-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:10px;padding-top:18px}
+.today-head .day{font-family:var(--display);font-weight:800;font-size:clamp(22px,3vw,30px)}
+.today-head .focus{color:var(--muted)}
+.checks{display:grid;gap:0}
+.check{display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:start;padding:12px 0;border-bottom:1px solid var(--line)}
+.check:last-child{border-bottom:0}
+.check input{width:24px;height:24px;margin-top:2px;accent-color:var(--accent);cursor:pointer}
+.check .t{font-weight:600}
+.check .d{color:var(--muted);font-size:14px;white-space:pre-wrap}
+.check.done .t{text-decoration:line-through;color:var(--muted)}
+.check .meta{font-family:var(--mono);font-size:12px;color:var(--muted);white-space:nowrap}
+.progress{height:8px;background:var(--line);border-radius:999px;overflow:hidden;margin-top:10px}
+.progress i{display:block;height:100%;background:var(--accent);width:0}
+.finish{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding-top:12px}
+.finish input{flex:1;min-width:200px;font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg)}
+.gate{background:var(--warn-soft);color:var(--warn);border-radius:8px;padding:8px 12px;font-size:14px;font-weight:600;margin-top:12px}
+/* TV workout screen */
+.tv{padding-top:18px}
+.tv .tvhead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:10px}
+.tv .tvhead .day{font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,48px)}
+.tv .check{grid-template-columns:44px 1fr;padding:18px 0}
+.tv .check input{width:34px;height:34px}
+.tv .check .t{font-size:clamp(20px,2.6vw,32px);font-family:var(--display);font-weight:700}
+.tv .check .d{font-size:clamp(15px,1.8vw,22px)}
+.tv .progress{height:12px}
+.plan{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;padding-top:14px}
+.plan .dayplan{border:1px solid var(--line);border-radius:10px;padding:12px 14px;min-width:0}
+.plan .dayplan.today{border-color:var(--accent);background:var(--accent-soft)}
+.plan ul{margin:0;padding-left:18px}
+.plan li{margin:4px 0}
+.plan li small{display:block;color:var(--muted)}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;padding-top:14px}
+.kv div{min-width:0}
+.kv ul{margin:0;padding-left:18px}
+@media (max-width:520px){.entry{grid-template-columns:1fr}.entry .when{padding-top:0}}
+@media (prefers-reduced-motion: reduce){.blockhead .chev{transition:none}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="brand" id="brandline">Urban Golf Performance · Student Athlete</div>
+      <h1 id="h1name">Seve Todd</h1>
+      <div class="sub" id="subline">Golf, training, school and home in one place. Open it, do the day, check it off.</div>
+    </div>
+    <div class="status" id="status">Connecting…</div>
+  </header>
+  <nav class="views" id="nav">
+    <a href="#today" data-v="today">Today</a>
+    <a href="#workout" data-v="workout">Workout</a>
+    <a href="#practice" data-v="practice">Practice</a>
+    <a href="#swing" data-v="swing">Swing</a>
+    <a href="#journal" data-v="journal">Journal</a>
+    <a href="#school" data-v="school">School</a>
+    <a href="#record" data-v="record">Record</a>
+  </nav>
+
+  <!-- ===== TODAY ===== -->
+  <div class="view" id="v-today" hidden>
+    <div class="today-head"><div class="day" id="td-day">Today</div><div class="focus" id="td-focus"></div></div>
+    <div class="tiles">
+      <div class="tile"><div class="lab">Next event</div><div class="val" id="td-next" style="font-size:18px;line-height:1.2">—</div><div class="note" id="td-next-note"></div><div class="note" id="td-card-link"></div></div>
+      <div class="tile" id="td-rtp-tile"><div class="lab">Return to play</div><div class="val" id="td-rtp" style="font-size:18px;line-height:1.2">—</div><div class="note" id="td-rtp-note"></div></div>
+      <div class="tile"><div class="lab">Scoring average</div><div class="val" id="td-avg">—</div><div class="note" id="td-avg-note"></div></div>
+      <div class="tile"><div class="lab">Days done this week</div><div class="val" id="td-streak">—</div><div class="note">finished days, Mon to Sun</div></div>
+    </div>
+    <div id="td-gate"></div>
+    <section class="block" id="td-notes-block"><div class="blockhead"><span>From the team</span><button class="small ghost" id="btn-add-note" hidden>Post a note</button></div><div class="body"><form class="edit" id="nt-form" hidden></form><div class="notes" id="td-notes"></div><div class="empty" id="td-notes-empty" hidden>No notes yet. Coaches: one line on what you want him on this week.</div></div></section>
+    <section class="block"><div class="blockhead"><span>Workout <span class="count" id="td-wo-count"></span></span><a class="btn small" href="#workout">Put on the TV ›</a></div><div class="body"><div class="checks" id="td-workout"></div><div class="progress"><i id="td-wo-bar"></i></div></div></section>
+    <section class="block"><div class="blockhead"><span>Practice <span class="count" id="td-pr-count"></span></span><a class="btn small" href="#practice">All drills ›</a></div><div class="body"><div class="checks" id="td-practice"></div></div></section>
+    <section class="block"><div class="blockhead"><span>Reading and mindset</span></div><div class="body"><div class="checks" id="td-reading"></div></div></section>
+    <section class="block"><div class="blockhead"><span>School and home</span><a class="btn small" href="#school">Subjects and due dates ›</a></div><div class="body"><div id="td-due"></div><div class="checks" id="td-school"></div><div class="finish" style="padding-top:14px"><label style="font-size:13px;color:var(--muted);font-weight:600">Homework today, minutes <input id="td-hw" type="number" inputmode="numeric" min="0" step="5" style="width:90px;margin-left:8px;font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg)"></label></div><div class="hint">Add today's homework and family items as you go.</div><form class="edit" id="td-addform" style="margin-top:10px"><label class="full">Add an item for today<input id="td-add-text" placeholder="Math worksheet · Walk the dog · Pack for Saturday"></label><div class="actions"><button type="submit" class="small">Add</button></div></form></div></section>
+    <section class="block"><div class="blockhead"><span>Finish the day</span></div><div class="body"><div class="finish"><input id="td-note" placeholder="One line on how it went (wrist, energy, what clicked)"><button class="primary" id="td-finish">Finish today</button></div><div class="hint" id="td-finish-hint">Writes a dated entry to the record so the team sees what got done.</div></div></section>
+  </div>
+
+  <!-- ===== WORKOUT (TV) ===== -->
+  <div class="view tv" id="v-workout" hidden>
+    <div class="tvhead"><div class="day" id="wo-day">Workout</div><div class="focus" id="wo-focus"></div></div>
+    <div id="wo-gate"></div>
+    <div class="checks" id="wo-list"></div>
+    <div class="progress"><i id="wo-bar"></i></div>
+    <div class="toolbar"><span class="hint" id="wo-source"></span><div class="spacer"></div><button class="small ghost" id="btn-edit-workout" hidden>Edit workout plan</button></div>
+    <form class="edit" id="wo-form" hidden></form>
+    <div id="wo-note"></div>
+    <details class="block"><summary class="blockhead"><span>Week at a glance</span><span class="chev">›</span></summary><div class="body"><div class="plan" id="wo-week"></div></div></details>
+  </div>
+
+  <!-- ===== PRACTICE ===== -->
+  <div class="view" id="v-practice" hidden>
+    <div class="today-head"><div class="day" id="pr-day">Practice</div><div class="focus" id="pr-focus"></div></div>
+    <div id="pr-gate"></div>
+    <div class="toolbar"><span class="hint" id="pr-source"></span><div class="spacer"></div><button class="small ghost" id="btn-edit-practice" hidden>Edit practice plan</button></div>
+    <form class="edit" id="pr-form" hidden></form>
+    <div id="pr-note"></div>
+    <section class="block"><div class="blockhead"><span>Today</span></div><div class="body"><div class="checks" id="pr-today"></div></div></section>
+    <section class="block"><div class="blockhead"><span>Week at a glance</span></div><div class="body"><div class="plan" id="pr-week"></div></div></section>
+    <section class="block"><div class="blockhead"><span>What we are working on</span></div><div class="body"><div class="kv" id="pr-focusareas"></div></div></section>
+    <section class="block"><div class="blockhead"><span>Drill library</span></div><div class="body"><div class="plan" id="pr-library"></div></div></section>
+  </div>
+
+  <!-- ===== SCHOOL ===== -->
+  <!-- ===== TOURNAMENT CARD ===== -->
+  <div class="view" id="v-card" hidden>
+    <div class="toolbar"><a class="btn small" href="#today">‹ Back</a><div class="spacer"></div><button class="small" onclick="window.print()">Print</button></div>
+    <div class="card" id="card-body"></div>
+  </div>
+
+  <!-- ===== SWING ===== -->
+  <div class="view" id="v-swing" hidden>
+    <div class="today-head"><div class="day">Swing</div><div class="focus">Videos from lessons and practice, with what the coaches are working on.</div></div>
+    <div class="toolbar"><span class="hint" id="sw-source"></span><div class="spacer"></div><a class="btn small" id="sw-folder" target="_blank" rel="noopener" href="#">Add a video (Drive folder)</a><button class="small ghost" id="btn-edit-swing" hidden>Edit video list</button></div>
+    <form class="edit" id="sw-form" hidden></form>
+    <div id="sw-note"></div>
+    <section class="block"><div class="blockhead"><span>What we are working on</span></div><div class="body"><div class="kv" id="sw-focus"></div></div></section>
+    <div id="sw-videos" class="videos"></div>
+    <div class="empty" id="sw-empty" hidden>No videos yet. Drop a clip in the Drive folder and it shows up here on the next refresh.</div>
+  </div>
+
+  <!-- ===== JOURNAL ===== -->
+  <div class="view" id="v-journal" hidden>
+    <div class="today-head"><div class="day">Journal</div><div class="focus">How it's going, in Seve's words. The team reads it.</div></div>
+    <div class="tiles">
+      <div class="tile"><div class="lab">Feeling, last 7 days</div><div class="val" id="jn-mood">—</div><div class="note">average of his 1–10</div></div>
+      <div class="tile"><div class="lab">Entries</div><div class="val" id="jn-count">—</div><div class="note">last 30 days</div></div>
+      <div class="tile" style="grid-column:span 2"><div class="lab">Latest</div><div class="val" id="jn-latest" style="font-size:17px;line-height:1.3;font-family:var(--body);font-weight:500">—</div><div class="note" id="jn-latest-when"></div></div>
+    </div>
+    <section class="block" id="jn-write"><div class="blockhead"><span>Write today's entry</span></div><div class="body">
+      <form id="jn-form" class="edit" style="display:grid;gap:12px;grid-template-columns:1fr">
+        <label>How are you feeling today, 1 to 10? <input type="number" name="mood" min="1" max="10" style="width:80px;margin-left:8px"></label>
+        <label>How is it going — golf, body, school, anything.<textarea name="text" rows="4" style="font-family:var(--body);font-size:15px" placeholder="What felt good, what was hard, what I want to work on."></textarea></label>
+        <div class="actions"><button class="primary" type="submit">Save entry</button></div>
+      </form>
+      <div class="hint" id="jn-hint" hidden></div>
+      <div id="jn-embed" hidden></div>
+    </div></section>
+    <section class="block"><div class="blockhead"><span>Entries</span></div><div class="body"><div class="log" id="jn-list"></div><div class="empty" id="jn-empty" hidden>Nothing written yet.</div></div></section>
+  </div>
+
+  <div class="view" id="v-school" hidden>
+    <div class="today-head"><div class="day">School</div><div class="focus">So the team, and Seve, can see the workload next to the golf.</div></div>
+    <div class="tiles">
+      <div class="tile"><div class="lab">Homework this week</div><div class="val" id="sc-week">—</div><div class="note">minutes, Mon to Sun, from the daily check-ins</div></div>
+      <div class="tile"><div class="lab">Average per school day</div><div class="val" id="sc-avg">—</div><div class="note">minutes, days with homework logged</div></div>
+      <div class="tile"><div class="lab">Subjects needing help</div><div class="val" id="sc-help">—</div><div class="note" id="sc-help-note"></div></div>
+      <div class="tile"><div class="lab">Next due</div><div class="val" id="sc-next" style="font-size:18px;line-height:1.2">—</div><div class="note" id="sc-next-note"></div></div>
+    </div>
+    <div class="toolbar"><span class="hint" id="sc-source"></span><div class="spacer"></div><button class="small ghost" id="btn-edit-school" hidden>Edit subjects and due dates</button></div>
+    <form class="edit" id="sc-form" hidden></form>
+    <section class="block"><div class="blockhead"><span>Subjects</span></div><div class="body"><div class="tablewrap"><table><thead><tr><th>Subject</th><th>How it's going</th><th>Notes</th></tr></thead><tbody id="sc-subjects"></tbody></table></div><div class="empty" id="sc-subjects-empty" hidden>Add his subjects so the team can see where school is easy and where it is heavy.</div></div></section>
+    <section class="block"><div class="blockhead"><span>Tests and due dates</span></div><div class="body"><div class="tablewrap"><table><thead><tr><th>Date</th><th>What</th><th>Subject</th></tr></thead><tbody id="sc-due"></tbody></table></div><div class="empty" id="sc-due-empty" hidden>Nothing coming up on the list.</div></div></section>
+    <section class="block"><div class="blockhead"><span>Homework time, last 14 days</span></div><div class="body"><div class="tablewrap"><table><thead><tr><th>Day</th><th>Minutes</th><th>Note</th></tr></thead><tbody id="sc-days"></tbody></table></div><div class="hint">Minutes come from the Today page. Enter them when he finishes homework.</div></div></section>
+    <section class="block"><div class="blockhead"><span>Notes for the team</span></div><div class="body"><div class="hint" id="sc-notes" style="white-space:pre-wrap;color:var(--fg);font-size:15px;padding-top:12px"></div></div></section>
+  </div>
+
+  <!-- ===== RECORD (team) ===== -->
+  <div class="view" id="v-record" hidden>
+    <div class="tiles">
+      <div class="tile"><div class="lab">Scoring average</div><div class="val" id="t-avg">—</div><div class="note" id="t-avg-note">from completed tournament rounds</div></div>
+      <div class="tile"><div class="lab">Handicap</div><div class="val" id="t-hcp">—</div><div class="note" id="t-hcp-note"></div></div>
+      <div class="tile"><div class="lab">Next event</div><div class="val" id="t-next" style="font-size:18px;line-height:1.2">—</div><div class="note" id="t-next-note"></div></div>
+      <div class="tile"><div class="lab">Return to play</div><div class="val" id="t-rtp" style="font-size:18px;line-height:1.2">—</div><div class="note" id="t-rtp-note"></div></div>
+    </div>
+
+    <details class="block" open id="sec-schedule">
+      <summary class="blockhead"><span>Tournament schedule &amp; results <span class="count" id="c-events"></span></span><span class="chev">›</span></summary>
+      <div class="body">
+        <div class="toolbar">
+          <div class="chips" id="evfilter"><span class="chip on" data-f="all">All</span><span class="chip" data-f="upcoming">Upcoming</span><span class="chip" data-f="played">Played</span></div>
+          <div class="spacer"></div>
+          <button class="primary" id="btn-add-event">+ Add tournament</button>
+        </div>
+        <form class="edit" id="evform" hidden></form>
+        <div class="tablewrap"><table id="evtable"><thead><tr><th>Date</th><th>Tournament</th><th>Tour</th><th>Course</th><th>Reg.</th><th>R1</th><th>R2</th><th>R3</th><th>Total</th><th>Place</th><th></th></tr></thead><tbody id="evbody"></tbody></table></div>
+        <div class="empty" id="evempty" hidden>No tournaments yet. Add the first one above.</div>
+      </div>
+    </details>
+
+    <details class="block" open id="sec-stats">
+      <summary class="blockhead"><span>Numbers <span class="count" id="c-stats"></span></span><span class="chev">›</span></summary>
+      <div class="body">
+        <div class="toolbar"><span class="hint">Round stats from tournaments, test numbers from practice, launch-monitor numbers from the bay. Latest first, with the trail behind it.</span><div class="spacer"></div><button class="primary" id="btn-add-stat">+ Log a number</button></div>
+        <form class="edit" id="stform" hidden></form>
+        <div class="tiles" id="st-tiles"></div>
+        <div id="st-list"></div>
+        <div class="empty" id="st-empty" hidden>Nothing logged yet.</div>
+      </div>
+    </details>
+
+    <details class="block" open id="sec-log">
+      <summary class="blockhead"><span>Development log <span class="count" id="c-log"></span></span><span class="chev">›</span></summary>
+      <div class="body">
+        <div class="toolbar">
+          <div class="chips" id="logfilter"><span class="chip on" data-f="all">All</span><span class="chip" data-f="golf">Golf</span><span class="chip" data-f="journal">Journal</span><span class="chip" data-f="tournament">Tournament review</span><span class="chip" data-f="fitness">Fitness</span><span class="chip" data-f="recovery">Recovery</span><span class="chip" data-f="mindset">Mindset</span><span class="chip" data-f="daily">Daily</span><span class="chip" data-f="admin">Admin</span></div>
+          <div class="spacer"></div>
+          <button class="primary" id="btn-add-log">+ Add entry</button>
+        </div>
+        <form class="edit" id="logform" hidden></form>
+        <div class="log" id="logbody"></div>
+        <div class="empty" id="logempty" hidden>No entries yet.</div>
+      </div>
+    </details>
+
+    <details class="block" id="sec-team">
+      <summary class="blockhead"><span>Team <span class="count" id="c-team"></span></span><span class="chev">›</span></summary>
+      <div class="body">
+        <div class="toolbar"><div class="spacer"></div><button id="btn-add-member">+ Add team member</button></div>
+        <form class="edit" id="teamform" hidden></form>
+        <div class="team" id="teambody"></div>
+      </div>
+    </details>
+
+    <details class="block" id="sec-profile">
+      <summary class="blockhead"><span>Player profile, goals &amp; resources</span><span class="chev">›</span></summary>
+      <div class="body">
+        <div class="toolbar"><div class="spacer"></div><button id="btn-edit-profile">Edit profile</button></div>
+        <form class="edit" id="profform" hidden></form>
+        <div class="profile" id="profbody"></div>
+      </div>
+    </details>
+  </div>
+</div>
+
+<script id="snap" type="application/json">{"publishedAt":"2026-11-05T05:10:00Z","events":[],"team":[{"id":"t01","name":"Zach","role":"Golf coach","org":"UGP Austin","focus":"Building a low-maintenance swing: depth in the backswing, then shift into the lead side without getting steep.","contact":"","order":1},{"id":"t02","name":"O'Neill Cowan","role":"Director of Coaching","org":"UGP","focus":"Putting: square face at impact, toe and heel moving the same speed.","contact":"","order":2},{"id":"t03","name":"Dr. Emmanuel Garcia","role":"Recovery","org":"UGP","focus":"Lower-body program (#1 and #2, alternating days); mobility program.","contact":"","order":3}],"log":[{"id":"l01","date":"2026-02-24","category":"golf","author":"Zach (UGP ATX)","title":"Session — building a low-maintenance golf swing","text":"For Mac, it starts with depth in the backswing. Opens the door for us to shift into our lead side without getting super steep/vertical.\nSequence: 1. Deeper backswing … (full sequence in the Mighty post; Swing Catalyst video attached there)."},{"id":"l02","date":"2026-04-01","category":"fitness","author":"Mac Todd","title":"Walking, diet, moving better","text":"Taking some good rigorous walks lately and monitoring my diet. Moving a little better. Recent smooth 7 iron: 183 carry, 88.3 club speed, 126.2 ball speed, 1.43 smash, little draw.\n(Feed shows “7 months ago” — date approximate.)"},{"id":"l03","date":"2025-02-05","category":"recovery","author":"UGP ATX","title":"RECOVERY — Mobility Program","text":"Featured program in the member space."},{"id":"l04","date":"2024-03-03","category":"fitness","author":"Dr. Emmanuel Garcia","title":"Lower Body Workout #2","text":"Alternate days with Workout #1. Demo video in the Mighty post."},{"id":"l05","date":"2024-03-01","category":"golf","author":"O'Neill Cowan","title":"Putting drill — two balls, same distance","text":"At home or at the course, 8–12 feet from the target. Place two golf balls next to each other; the goal is to hit both the exact same distance. This ensures the putter comes in square, toe and heel traveling the same speed at impact. Alternate 10 reps of the drill with 5 reps of a single ball. Ball should feel like it comes out of the center after 3–4 sets."},{"id":"l06","date":"2024-02-29","category":"recovery","author":"Mac Todd","title":"Icing the knee and meditating","text":"Recovery is a critical and often overlooked aspect of performance."},{"id":"l07","date":"2024-02-27","category":"admin","author":"Mac Todd","title":"Swing video with lines drawn","text":"Takes quite a while to go through this process of editing the video in another app and then saving and uploading here. (The product note: shoot, annotate and file in one motion.)"}],"stats":[{"id":"s01","date":"2026-04-01","label":"7 iron carry","value":"183","unit":"yds","source":"TrackMan","note":"smooth, little draw · date approximate"},{"id":"s02","date":"2026-04-01","label":"7 iron club speed","value":"88.3","unit":"mph","source":"TrackMan","note":""},{"id":"s03","date":"2026-04-01","label":"7 iron ball speed","value":"126.2","unit":"mph","source":"TrackMan","note":""},{"id":"s04","date":"2026-04-01","label":"7 iron smash factor","value":"1.43","unit":"","source":"TrackMan","note":""}],"profile":{"name":"Mac Todd","kind":"adult","tagline":"Swing, body, recovery and numbers in one place, built from two years of the UGP feed.","bio":"Mac Todd · Carmel, CA\nUGP member since the beginning; coached at Austin and Santa Monica\nRebuilt from the Mighty Networks member space (Feb 2024 – Apr 2026)","goals":"A low-maintenance swing (Zach)\nMove better: legs, mobility, recovery","priorities":"Depth in the backswing, shift into the lead side\nPutting: square face, two-ball drill\nLower-body program, alternating days","metrics":"7 iron carry, club speed, ball speed, smash (TrackMan)\nWorkouts completed per week","rhythm":"","links":"","handicap":"","handicapAsOf":"","rtpPhase":"","rtpNote":"","mindsetCue":"Recovery is part of performance."},"school":{"subjects":[],"due":[],"notes":""},"notes":{"swing":{"by":"Zach","date":"2026-02-24","text":"Depth in the backswing first. That opens the door to shift into the lead side without getting steep."}},"swing":{"folder":"","videos":[]},"journal":{"formUrl":""},"plans":{"practice":{"gate":"","source":"From the UGP feed: O'Neill (Mar 2024), Zach (Feb 2026).","focus":{"mon":"Putting","tue":"Backswing depth","wed":"Putting","thu":"Backswing depth","fri":"Play","sat":"Play","sun":"Rest"},"days":{"mon":[{"t":"Two-ball putting drill","d":"8–12 ft. 10 reps two balls, 5 reps one ball. 3–4 sets."}],"tue":[{"t":"Deeper backswing reps","d":"Zach’s sequence. Slow, feel the depth before the shift."}],"wed":[{"t":"Two-ball putting drill","d":""}],"thu":[{"t":"Deeper backswing reps","d":""}],"fri":[{"t":"Play","d":""}],"sat":[{"t":"Play","d":""}],"sun":[]},"focusAreas":[{"t":"Backswing depth","items":["Depth first; it lets the lead-side shift happen without getting steep (Zach)"]},{"t":"Lead-side shift","items":["Shift into the lead side from a deep backswing, not a vertical one (Zach)"]},{"t":"Putting","items":["Two-ball drill: square face, toe and heel the same speed (O'Neill)"]}],"library":[{"t":"Putting","items":[{"t":"Two-ball, same distance","d":"8–12 ft; 10 reps two balls, 5 reps single ball; 3–4 sets"}]},{"t":"Swing","items":[{"t":"Deeper backswing reps","d":"Zach’s sequence"}]}]},"workout":{"gate":"","source":"Dr. Garcia’s lower-body program (Mar 2024), alternating days; mobility program (Feb 2025). Details live in the Mighty videos.","focus":{"mon":"Lower body #1","tue":"Mobility","wed":"Lower body #2","thu":"Mobility","fri":"Lower body #1","sat":"Walk","sun":"Mobility"},"days":{"mon":[{"t":"Lower Body Workout #1","d":"Dr. Garcia’s program"}],"tue":[{"t":"Mobility program","d":"UGP ATX recovery"}],"wed":[{"t":"Lower Body Workout #2","d":"Alternate days with #1"}],"thu":[{"t":"Mobility program","d":""}],"fri":[{"t":"Lower Body Workout #1","d":""}],"sat":[{"t":"Rigorous walk","d":""}],"sun":[{"t":"Mobility program","d":""}]}},"reading":{"items":[{"t":"Meditate 10 minutes","d":"","m":"daily"}]},"school":{"items":[]}}}</script>
+<script>
+(function(){
+  const $=s=>document.querySelector(s);
+  const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  let db=null,user=null,canWrite=true,uid=null;let swing={},journal={},liveDb=false,notes={},stats=[];
+  let events=[],log=[],team=[],profile={},plans={},day={},weekDays={},recentDays={},school={};
+  let evF='all',logF='all';
+  const now=new Date();
+  const today=localISO(now);
+  const DOW=['sun','mon','tue','wed','thu','fri','sat'];
+  const DOWN={mon:'Monday',tue:'Tuesday',wed:'Wednesday',thu:'Thursday',fri:'Friday',sat:'Saturday',sun:'Sunday'};
+  const dow=DOW[now.getDay()];
+  function localISO(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+  function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2200);}
+  function fmtDate(iso,end){if(!iso)return'';const d=new Date(iso+'T12:00');const o={month:'short',day:'numeric'};if(d.getFullYear()!==now.getFullYear())o.year='numeric';let s=d.toLocaleDateString(undefined,o);if(end&&end!==iso){const e=new Date(end+'T12:00');s+='–'+e.toLocaleDateString(undefined,e.getMonth()===d.getMonth()?{day:'numeric'}:o);}return s;}
+  const num=v=>{const n=parseFloat(v);return isFinite(n)?n:null;};
+  const nextEvent=()=>events.filter(e=>e.date>=today).sort((a,b)=>a.date.localeCompare(b.date))[0];
+  const daysUntil=iso=>Math.round((new Date(iso+'T12:00')-new Date(today+'T12:00'))/86400000);
+
+  // ---------- views ----------
+  function route(){
+    let v=(location.hash||'#today').replace('#','');
+    if(!['today','workout','practice','swing','journal','school','record','card'].includes(v))v='today';if(v==='school'&&profile.kind==='adult')v='today';
+    document.querySelectorAll('.view').forEach(el=>el.hidden=el.id!=='v-'+v);
+    document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('on',a.dataset.v===v));
+    document.querySelector('header.top').hidden=(v==='workout');
+    $('#nav').hidden=(v==='workout');
+  }
+  window.addEventListener('hashchange',route);route();
+
+  // ---------- plan items ----------
+  // plans/workout and plans/practice: {days:{mon:[{t,d}],...}, focus:{mon:'...'}, gate:'', source:'', library:[{t,d,phase}]}
+  function itemsFor(plan,d){return (plan&&plan.days&&plan.days[d])||[];}
+  function checkRow(key,it,list,big){
+    const done=!!(day.checks&&day.checks[key]);
+    const el=document.createElement('label');el.className='check'+(done?' done':'');
+    el.innerHTML=`<input type="checkbox" ${done?'checked':''} ${canWrite?'':'disabled'}><div><div class="t">${esc(it.t)}</div>${it.d?'<div class="d">'+esc(it.d)+'</div>':''}</div>${big?'':'<div class="meta">'+esc(it.m||'')+'</div>'}`;
+    el.querySelector('input').onchange=async e=>{await setCheck(key,e.target.checked);};
+    list.appendChild(el);
+  }
+  async function setCheck(key,val){
+    if(!db)return;const checks=Object.assign({},day.checks||{});if(val)checks[key]=new Date().toISOString();else delete checks[key];
+    const d=Object.assign({},day,{checks,date:today});day=d;renderToday();renderWorkout();renderPractice();
+    try{await db.doc('days/'+today).set(d);}catch(err){toast('Could not save');}
+  }
+  function gateHtml(plan){return plan&&plan.gate?'<div class="gate">'+esc(plan.gate)+'</div>':'';}
+
+  // ---------- Today ----------
+  function renderToday(){
+    $('#td-day').textContent=now.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
+    const wo=plans.workout||{},pr=plans.practice||{};
+    $('#td-focus').textContent=[wo.focus&&wo.focus[dow],pr.focus&&pr.focus[dow]].filter(Boolean).join(' · ');
+    const ne=nextEvent();
+    $('#td-next').textContent=ne?ne.name:'—';
+    $('#td-next-note').textContent=ne?(daysUntil(ne.date)===0?'Today':daysUntil(ne.date)+' days · '+fmtDate(ne.date,ne.endDate))+(ne.registered==='Y'?' · registered':' · not registered'):'';
+    $('#td-rtp').textContent=profile.rtpPhase||'—';$('#td-rtp-note').textContent=profile.rtpNote||'';
+    $('#td-card-link').innerHTML=ne&&daysUntil(ne.date)<=10?'<a href="#card">Tournament card ›</a>':'';
+    const rounds=[];events.forEach(e=>[e.r1,e.r2,e.r3].forEach(r=>{const n=num(r);if(n)rounds.push(n);}));
+    $('#td-avg').textContent=rounds.length?(rounds.reduce((a,b)=>a+b,0)/rounds.length).toFixed(1):'—';$('#td-avg-note').textContent=rounds.length?rounds.length+' rounds · low '+Math.min(...rounds):'';
+    $('#td-streak').textContent=Object.values(weekDays).filter(d=>d.finished).length+'/7';
+    $('#td-gate').innerHTML=gateHtml(wo)+gateHtml(pr);
+    const woList=$('#td-workout');woList.innerHTML='';const woItems=itemsFor(wo,dow);woItems.forEach((it,i)=>checkRow('wo'+i,it,woList));
+    if(!woItems.length)woList.innerHTML='<div class="empty">No workout planned today.</div>';
+    const woDone=woItems.filter((_,i)=>day.checks&&day.checks['wo'+i]).length;$('#td-wo-count').textContent=woItems.length?woDone+'/'+woItems.length:'';$('#td-wo-bar').style.width=(woItems.length?100*woDone/woItems.length:0)+'%';
+    const prList=$('#td-practice');prList.innerHTML='';const prItems=itemsFor(pr,dow);prItems.forEach((it,i)=>checkRow('pr'+i,it,prList));
+    if(!prItems.length)prList.innerHTML='<div class="empty">No practice planned today.</div>';
+    const prDone=prItems.filter((_,i)=>day.checks&&day.checks['pr'+i]).length;$('#td-pr-count').textContent=prItems.length?prDone+'/'+prItems.length:'';
+    const rd=$('#td-reading');rd.innerHTML='';const rdItems=((plans.reading||{}).items)||[];rdItems.forEach((it,i)=>checkRow('rd'+i,it,rd));if(!rdItems.length)rd.innerHTML='<div class="empty">Add his current book and a mindset item in the Reading plan.</div>';
+    const sc=$('#td-school');sc.innerHTML='';const scItems=(((plans.school||{}).items)||[]).concat(day.extra||[]);scItems.forEach((it,i)=>checkRow('sc'+i,it,sc));if(!scItems.length)sc.innerHTML='<div class="empty">Nothing yet today.</div>';
+    $('#td-finish').disabled=!!day.finished;$('#td-finish').textContent=day.finished?'Finished ✓':'Finish today';
+    $('#td-note').value=day.note||'';
+    if(document.activeElement!==$('#td-hw'))$('#td-hw').value=day.hwMin||'';
+    const soon=(school.due||[]).filter(d=>d.date>=today&&daysUntil(d.date)<=7).sort((a,b)=>a.date.localeCompare(b.date));
+    $('#td-due').innerHTML=soon.length?'<div class="gate" style="background:var(--accent-soft);color:var(--accent);margin:12px 0 4px">Coming up: '+soon.map(d=>esc(fmtDate(d.date))+' · '+esc(d.t)+(d.subject?' ('+esc(d.subject)+')':'')).join(' · ')+'</div>':'';
+  }
+  $('#td-hw').onchange=async e=>{const v=num(e.target.value);const d=Object.assign({},day,{date:today,hwMin:v||0});day=d;try{await db.doc('days/'+today).set(d);toast('Saved');}catch(err){toast('Could not save');}};
+
+  // ---------- School ----------
+  const statusPill=s=>{const m={good:['Going well',''],watch:['Watch','warn'],help:['Needs help','crit']};const x=m[s]||[s||'',''];return x[0]?'<span class="pill '+x[1]+'">'+esc(x[0])+'</span>':'';};
+  function driveId(s){s=String(s||'').trim();const m=s.match(/[-\w]{25,}/);return m?m[0]:s;}
+  function renderSwing(){
+    $('#sw-folder').href=swing.folder||'#';$('#sw-folder').hidden=!swing.folder;
+    $('#sw-source').textContent=swing.updatedAt?'Updated '+fmtDate(swing.updatedAt.slice(0,10)):'';$('#btn-edit-swing').hidden=!canWrite;
+    const pr=plans.practice||{};const fa=$('#sw-focus');fa.innerHTML='';(pr.focusAreas||[]).filter(f=>!/superpower|wedge/i.test(f.t)).forEach(f=>{const el=document.createElement('div');el.innerHTML=`<h3>${esc(f.t)}</h3><ul>${(f.items||[]).map(x=>'<li>'+esc(x)+'</li>').join('')}</ul>`;fa.appendChild(el);});
+    const vids=(swing.videos||[]).slice().sort((a,b)=>String(b.date).localeCompare(String(a.date)));const wrap=$('#sw-videos');wrap.innerHTML='';
+    vids.forEach(v=>{const el=document.createElement('div');el.className='video';const id=driveId(v.id);const src=/^https?:/.test(id)?id:'https://drive.google.com/file/d/'+id+'/preview';
+      el.innerHTML=`<iframe src="${esc(src)}" allow="autoplay; fullscreen" loading="lazy"></iframe><div class="meta"><div class="ttl">${esc(v.title||'Swing')}${v.cue?'<span class="cue">'+esc(v.cue)+'</span>':''}</div><div class="by">${esc(fmtDate(v.date))}${v.by?' · '+esc(v.by):''}</div>${v.note?'<div class="nt">'+esc(v.note)+'</div>':''}</div>`;wrap.appendChild(el);});
+    $('#sw-empty').hidden=vids.length>0;
+  }
+  function openSwingForm(){
+    const f=$('#sw-form');f.hidden=false;
+    const txt=(swing.videos||[]).map(v=>[v.date,v.id,v.title||'',v.by||'',v.note||'',v.cue||''].join(' | ')).join('\n');
+    f.innerHTML=`<label class="full">Drive folder link<input id="swf-folder" value="${esc(swing.folder||'')}"></label>
+      <label class="full">Videos, one per line: YYYY-MM-DD | Drive link or file ID | title | who | note | cue (grip, load, putting…)<textarea id="swf-videos" placeholder="2026-11-08 | https://drive.google.com/file/d/XXXX/view | Driver, face on | Chelso | grip stronger, better load">${esc(txt)}</textarea></label>
+      <div class="actions"><button type="button" id="swf-cancel">Cancel</button><button class="primary" type="submit">Save</button></div>`;
+    $('#swf-cancel').onclick=()=>{f.hidden=true;};
+    f.onsubmit=async e=>{e.preventDefault();const rows=String($('#swf-videos').value||'').split('\n').map(x=>x.trim()).filter(Boolean).map(x=>x.split('|').map(y=>y.trim()));
+      const d={folder:$('#swf-folder').value.trim(),videos:rows.filter(a=>a[0]&&a[1]).map(a=>({date:a[0],id:driveId(a[1]),title:a[2]||'',by:a[3]||'',note:a[4]||'',cue:a[5]||''})),updatedAt:new Date().toISOString()};
+      try{await db.doc('settings/swing').set(d);f.hidden=true;toast('Saved');}catch(err){toast('Could not save');}};
+  }
+  function renderJournal(){
+    const ent=log.filter(l=>l.category==='journal').sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+    const d7=new Date(now);d7.setDate(now.getDate()-6);const d30=new Date(now);d30.setDate(now.getDate()-29);
+    const m7=ent.filter(l=>l.date>=localISO(d7)&&num(l.mood));$('#jn-mood').textContent=m7.length?(m7.reduce((a,l)=>a+num(l.mood),0)/m7.length).toFixed(1):'—';
+    $('#jn-count').textContent=ent.filter(l=>l.date>=localISO(d30)).length||'—';
+    $('#jn-latest').textContent=ent[0]?(ent[0].text||ent[0].title||''):'Nothing yet';$('#jn-latest-when').textContent=ent[0]?fmtDate(ent[0].date)+(num(ent[0].mood)?' · feeling '+ent[0].mood+'/10':''):'';
+    const list=$('#jn-list');list.innerHTML='';ent.forEach(l=>{const el=document.createElement('div');el.className='entry';el.innerHTML=`<div class="when">${esc(fmtDate(l.date))}</div><div><div class="ttl">${num(l.mood)?'<span class="mood">'+esc(l.mood)+'</span>':''}${esc(l.title||'Journal')}</div><div class="txt" style="white-space:pre-wrap">${esc(l.text||'')}</div><div class="by">${esc(l.author||'Seve')}</div></div>`;list.appendChild(el);});
+    $('#jn-empty').hidden=ent.length>0;
+    const form=$('#jn-form'),emb=$('#jn-embed'),hint=$('#jn-hint');
+    if(journal.formUrl&&!liveDb){form.hidden=true;hint.hidden=true;emb.hidden=false;if(!emb.firstChild){emb.innerHTML=`<iframe src="${esc(journal.formUrl)}" style="width:100%;height:720px;border:0" loading="lazy"></iframe>`;}}
+    else if(!liveDb){form.hidden=true;emb.hidden=true;hint.hidden=false;hint.textContent='Entries are written from the signed-in portal (Dad’s phone or the iPad). A phone form is coming.';}
+    else{form.hidden=false;emb.hidden=true;hint.hidden=true;}
+  }
+  $('#jn-form').onsubmit=async e=>{e.preventDefault();const fd=new FormData(e.target);const text=String(fd.get('text')||'').trim();const mood=num(fd.get('mood'));if(!text&&!mood)return;
+    try{await db.collection('log').add({date:today,category:'journal',author:'Seve',title:'Journal',mood:mood||'',text,updatedAt:new Date().toISOString(),updatedBy:uid||''});e.target.reset();toast('Entry saved');}catch(err){toast('Could not save');}};
+  $('#btn-edit-swing').onclick=()=>openSwingForm();
+  // ---------- athlete mode ----------
+  function applyMode(){const adult=profile.kind==='adult';
+    if(profile.name){$('#h1name').textContent=profile.name;document.title=profile.name+' · UGP';}
+    $('#brandline').textContent='Urban Golf Performance · '+(adult?'Player':'Student Athlete');
+    if(profile.tagline)$('#subline').textContent=profile.tagline;
+    document.querySelectorAll('#nav a[data-v="school"]').forEach(a=>a.hidden=adult);
+    const sh=document.querySelector('#v-today section.block:has(#td-school)');if(sh)sh.hidden=adult;
+    $('#td-rtp-tile').hidden=!profile.rtpPhase&&adult;
+  }
+  // ---------- team notes ----------
+  const noteDomains={practice:'Practice',workout:'Workout',swing:'Swing',rtp:'Recovery',mindset:'Mindset'};
+  function noteHtml(k){const n=notes[k];if(!n||!n.text)return'';return `<div class="cnote"><div class="who">${esc(noteDomains[k]||k)} · ${esc(n.by||'')}${n.date?' · '+esc(fmtDate(n.date)):''}</div><div class="tx">${esc(n.text)}</div></div>`;}
+  function renderNotes(){const keys=Object.keys(noteDomains).filter(k=>notes[k]&&notes[k].text);$('#td-notes').innerHTML=keys.map(noteHtml).join('');$('#td-notes-empty').hidden=keys.length>0;$('#btn-add-note').hidden=!canWrite;
+    const put=(sel,k)=>{const el=$(sel);if(el)el.innerHTML=noteHtml(k).replace('class="cnote"','class="cnote single"');};
+    put('#pr-note',"practice");put('#wo-note','workout');put('#sw-note','swing');}
+  function openNoteForm(){const f=$('#nt-form');f.hidden=false;
+    f.innerHTML=`<label>Area<select id="ntf-k">${Object.keys(noteDomains).map(k=>`<option value="${k}">${noteDomains[k]}</option>`).join('')}</select></label><label>From<input id="ntf-by" placeholder="Your name"></label><label class="full">This week<textarea id="ntf-text" style="font-family:var(--body);font-size:14px" placeholder="One or two lines. What you want him on, and why."></textarea></label><div class="actions"><button type="button" id="ntf-cancel">Cancel</button><button class="primary" type="submit">Post</button></div>`;
+    $('#ntf-cancel').onclick=()=>{f.hidden=true;};
+    f.onsubmit=async e=>{e.preventDefault();const k=$('#ntf-k').value;const d=Object.assign({},notes);d[k]={by:$('#ntf-by').value.trim(),text:$('#ntf-text').value.trim(),date:today};try{await db.doc('settings/notes').set(d);f.hidden=true;toast('Posted');}catch(err){toast('Could not save');}};}
+  $('#btn-add-note').onclick=openNoteForm;
+  // ---------- stats / numbers ----------
+  function renderStats(){
+    const byLabel={};stats.slice().sort((a,b)=>String(a.date).localeCompare(String(b.date))).forEach(s=>{(byLabel[s.label]=byLabel[s.label]||[]).push(s);});
+    const labels=Object.keys(byLabel);$('#c-stats').textContent=stats.length?stats.length+' entries':'';$('#st-empty').hidden=stats.length>0;
+    const tiles=$('#st-tiles');tiles.innerHTML='';const list=$('#st-list');list.innerHTML='';
+    labels.sort((a,b)=>String(byLabel[b].at(-1).date).localeCompare(String(byLabel[a].at(-1).date))).forEach(l=>{const arr=byLabel[l];const cur=arr.at(-1);const prev=arr.length>1?arr.at(-2):null;
+      const delta=prev&&num(cur.value)&&num(prev.value)?(num(cur.value)-num(prev.value)):null;
+      const el=document.createElement('div');el.className='stat';el.innerHTML=`<div><div class="lb">${esc(l)}${cur.source?'<span class="cue">'+esc(cur.source)+'</span>':''}</div><div class="vals">${arr.map(s=>esc(s.value)).join(' → ')}${cur.note?' · '+esc(cur.note):''}</div></div><div style="text-align:right"><span class="cur">${esc(cur.value)}${cur.unit?' <small>'+esc(cur.unit)+'</small>':''}</span><div class="vals">${esc(fmtDate(cur.date))}${delta!==null?' · '+(delta>0?'+':'')+(+delta.toFixed(1)):''}</div>${canWrite?'<button class="small ghost" data-edit-st="'+esc(cur.id)+'">Edit</button>':''}</div>`;list.appendChild(el);});
+    // headline tiles: round stats from events with stat fields
+    const played=events.filter(e=>e.date<=today&&(num(e.gir)||num(e.putts)||num(e.upDowns))).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5);
+    const avg=k=>{const v=played.map(e=>num(e[k])).filter(x=>x!==null&&!isNaN(x)&&x!=='');return v.length?(v.reduce((a,b)=>a+b,0)/v.length):null;};
+    const t=(lab,val,note)=>`<div class="tile"><div class="lab">${lab}</div><div class="val">${val===null||val===undefined?'—':val}</div><div class="note">${note}</div></div>`;
+    const g=avg('gir'),pu=avg('putts'),tp=avg('threePutts'),ud=avg('upDowns');
+    tiles.innerHTML=t('GIR per round',g!==null?g.toFixed(1):null,'last '+played.length+' events with stats')+t('Putts per round',pu!==null?pu.toFixed(1):null,'fewer is the goal')+t('3-putts per round',tp!==null?tp.toFixed(1):null,'alignment and start line')+t('Up and downs',ud!==null?ud.toFixed(1):null,'per round, around the green');
+    tiles.hidden=!played.length;
+    list.querySelectorAll('[data-edit-st]').forEach(b=>b.onclick=()=>openStatForm(stats.find(x=>x.id===b.dataset.editSt)));
+  }
+  function openStatForm(s){s=s||{};const f=$('#stform');f.hidden=false;
+    f.innerHTML=`<label>Date<input type="date" name="date" required value="${esc(s.date||today)}"></label><label>What<input name="label" required list="st-labels" placeholder="30/60/90 score · 7 iron carry · Driver speed" value="${esc(s.label||'')}"><datalist id="st-labels">${[...new Set(stats.map(x=>x.label))].map(l=>'<option value="'+esc(l)+'">').join('')}</datalist></label><label>Value<input name="value" required value="${esc(s.value||'')}"></label><label>Unit<input name="unit" placeholder="yds · mph · makes/30" value="${esc(s.unit||'')}"></label><label>Source<input name="source" placeholder="TrackMan · Practice · Upgame" value="${esc(s.source||'')}"></label><label class="full">Note<input name="note" value="${esc(s.note||'')}"></label>
+      <div class="actions">${s.id?'<button type="button" class="ghost" id="st-del">Delete</button>':''}<button type="button" id="st-cancel">Cancel</button><button class="primary" type="submit">Save</button></div>`;
+    $('#st-cancel').onclick=()=>{f.hidden=true;};const del=$('#st-del');if(del)del.onclick=async()=>{if(del.textContent!=='Confirm delete'){del.textContent='Confirm delete';return;}await db.doc('stats/'+s.id).delete();f.hidden=true;};
+    f.onsubmit=async ev=>{ev.preventDefault();const d={};new FormData(f).forEach((v,k)=>d[k]=String(v).trim());d.updatedAt=new Date().toISOString();try{if(s.id){await db.doc('stats/'+s.id).set(d);}else{await db.collection('stats').add(d);}f.hidden=true;toast('Saved');}catch(err){toast('Could not save');}};}
+  $('#btn-add-stat').onclick=()=>openStatForm();
+  // ---------- round review ----------
+  function openReviewForm(e){const f=$('#logform');f.hidden=false;
+    f.innerHTML=`<div class="full hint">Round review · ${esc(e.name)} · ${esc(fmtDate(e.date,e.endDate))}</div>
+      <label class="full">What went well<textarea id="rv-well" style="font-family:var(--body);font-size:14px"></textarea></label><label class="full">What didn't<textarea id="rv-didnt" style="font-family:var(--body);font-size:14px"></textarea></label><label class="full">What I learned<textarea id="rv-learned" style="font-family:var(--body);font-size:14px"></textarea></label><label class="full">What I'll practice this week<textarea id="rv-practice" style="font-family:var(--body);font-size:14px"></textarea></label>
+      <label>GIR<input id="rv-gir" inputmode="numeric" value="${esc(e.gir||'')}"></label><label>Putts per round<input id="rv-putts" inputmode="numeric" value="${esc(e.putts||'')}"></label><label>3-putts<input id="rv-3p" inputmode="numeric" value="${esc(e.threePutts||'')}"></label><label>Up and downs<input id="rv-ud" inputmode="numeric" value="${esc(e.upDowns||'')}"></label><label>Penalties<input id="rv-pen" inputmode="numeric" value="${esc(e.penalties||'')}"></label>
+      <div class="actions"><button type="button" id="rv-cancel">Cancel</button><button class="primary" type="submit">Save review</button></div>`;
+    f.scrollIntoView({block:'nearest'});$('#rv-cancel').onclick=()=>{f.hidden=true;};
+    f.onsubmit=async ev=>{ev.preventDefault();const v=id=>$(id).value.trim();const well=v('#rv-well'),didnt=v('#rv-didnt'),learned=v('#rv-learned'),practice=v('#rv-practice');
+      const entry={date:today,category:'tournament',author:profile.name||'',title:'Round review — '+e.name,text:['Went well: '+well,'Didn’t: '+didnt,'Learned: '+learned,'This week: '+practice].join('\n'),well,didnt,learned,practice,eventId:e.id,updatedAt:new Date().toISOString(),updatedBy:uid||''};
+      const ev2=Object.assign({},e,{gir:v('#rv-gir'),putts:v('#rv-putts'),threePutts:v('#rv-3p'),upDowns:v('#rv-ud'),penalties:v('#rv-pen'),reviewed:'Y'});delete ev2.id;
+      try{await db.collection('log').add(entry);await db.doc('events/'+e.id).set(ev2);f.hidden=true;toast('Review saved');}catch(err){toast('Could not save');}};}
+  // ---------- tournament card ----------
+  function renderCard(){const ne=nextEvent();const b=$('#card-body');if(!ne){b.innerHTML='<div class="empty">No upcoming event.</div>';return;}
+    const pr=plans.practice||{},wo=plans.workout||{};const focus=(pr.focusAreas||[]).slice(0,3);
+    const nts=Object.keys(noteDomains).filter(k=>notes[k]&&notes[k].text).map(k=>`<li><b>${esc(noteDomains[k])}</b> — ${esc(notes[k].text)}${notes[k].by?' <span style="color:var(--muted)">('+esc(notes[k].by)+')</span>':''}</li>`).join('');
+    const rounds=[];events.forEach(e=>[e.r1,e.r2,e.r3].forEach(r=>{const n=num(r);if(n)rounds.push(n);}));
+    b.innerHTML=`<div class="meta">${esc(profile.name||'')} · Tournament card</div><h2>${esc(ne.name)}</h2><div class="meta">${esc(fmtDate(ne.date,ne.endDate))}${ne.teeTime?' · Tee '+esc(ne.teeTime):''} · ${esc(ne.course||'')}${ne.location?', '+esc(ne.location):''}${ne.tour?' · '+esc(ne.tour):''}${ne.registered==='Y'?' · Registered':' · <b>Not registered</b>'}</div>
+      <h4>Game plan</h4><ul>${focus.map(f=>'<li><b>'+esc(f.t)+'</b>'+((f.items||[])[0]?' — '+esc(f.items[0]):'')+'</li>').join('')||'<li>Play your game.</li>'}</ul>
+      ${nts?'<h4>From the team</h4><ul>'+nts+'</ul>':''}
+      ${(profile.rtpPhase||pr.gate)?'<h4>Body</h4><ul>'+(profile.rtpPhase?'<li>'+esc(profile.rtpPhase)+(profile.rtpNote?' — '+esc(profile.rtpNote):'')+'</li>':'')+(pr.gate?'<li>'+esc(pr.gate)+'</li>':'')+'</ul>':''}
+      <h4>Mindset</h4><div class="cue-big">${esc(profile.mindsetCue||'One shot. Pick the target, commit, accept.')}</div>
+      <h4>Numbers</h4><ul><li>Scoring average ${rounds.length?(rounds.reduce((a,b)=>a+b,0)/rounds.length).toFixed(1)+' over '+rounds.length+' rounds · low '+Math.min(...rounds):'—'}</li>${profile.handicap?'<li>Handicap '+esc(profile.handicap)+'</li>':''}</ul>
+      <h4>After the round</h4><ul><li>What went well · what didn’t · what I learned · what I’ll practice this week</li></ul>`;}
+  function renderSchool(){
+    const wk=Object.values(weekDays).map(d=>num(d.hwMin)||0);const wkSum=wk.reduce((a,b)=>a+b,0);const wkDays=wk.filter(x=>x>0).length;
+    $('#sc-week').textContent=wkSum?wkSum:'—';$('#sc-avg').textContent=wkDays?Math.round(wkSum/wkDays):'—';
+    const subs=school.subjects||[];const help=subs.filter(s=>s.status==='help');
+    $('#sc-help').textContent=subs.length?help.length:'—';$('#sc-help-note').textContent=help.map(s=>s.name).join(', ')||(subs.length?'none flagged':'add subjects below');
+    const due=(school.due||[]).filter(d=>d.date>=today).sort((a,b)=>a.date.localeCompare(b.date));
+    $('#sc-next').textContent=due[0]?due[0].t:'—';$('#sc-next-note').textContent=due[0]?fmtDate(due[0].date)+(due[0].subject?' · '+due[0].subject:''):'';
+    const sb=$('#sc-subjects');sb.innerHTML='';subs.forEach(s=>{const tr=document.createElement('tr');tr.innerHTML=`<td><strong>${esc(s.name)}</strong></td><td>${statusPill(s.status)}</td><td>${esc(s.note||'')}</td>`;sb.appendChild(tr);});$('#sc-subjects-empty').hidden=subs.length>0;
+    const db2=$('#sc-due');db2.innerHTML='';due.forEach(d=>{const tr=document.createElement('tr');tr.className=daysUntil(d.date)<=2?'next':'';tr.innerHTML=`<td class="num">${esc(fmtDate(d.date))}</td><td>${esc(d.t)}</td><td>${esc(d.subject||'')}</td>`;db2.appendChild(tr);});$('#sc-due-empty').hidden=due.length>0;
+    const dd=$('#sc-days');dd.innerHTML='';Object.keys(recentDays).sort().reverse().forEach(k=>{const d=recentDays[k];if(!d.hwMin&&!d.note)return;const tr=document.createElement('tr');tr.innerHTML=`<td class="num">${esc(fmtDate(k))}</td><td class="num">${esc(d.hwMin||'')}</td><td>${esc(d.note||'')}</td>`;dd.appendChild(tr);});
+    $('#sc-notes').textContent=school.notes||'Nothing yet. Use Edit to add context the team should know: tutoring, a heavy week, what he is enjoying.';
+    $('#sc-source').textContent=school.updatedAt?'Updated '+fmtDate(school.updatedAt.slice(0,10)):'';$('#btn-edit-school').hidden=!canWrite;
+  }
+  function openSchoolForm(){
+    const f=$('#sc-form');f.hidden=false;
+    const subsTxt=(school.subjects||[]).map(s=>[s.name,s.status||'',s.note||''].join(' | ')).join('\n');
+    const dueTxt=(school.due||[]).map(d=>[d.date,d.t,d.subject||''].join(' | ')).join('\n');
+    f.innerHTML=`<label class="full">Subjects, one per line: Subject | good, watch or help | note<textarea id="scf-subjects" placeholder="Math | watch | long problem sets, slow start\nEnglish | good |">${esc(subsTxt)}</textarea></label>
+      <label class="full">Tests and due dates, one per line: YYYY-MM-DD | what | subject<textarea id="scf-due" placeholder="2026-11-12 | Chapter 4 test | Math">${esc(dueTxt)}</textarea></label>
+      <label class="full">Notes for the team<textarea id="scf-notes" style="font-family:var(--body);font-size:14px">${esc(school.notes||'')}</textarea></label>
+      <div class="actions"><button type="button" id="scf-cancel">Cancel</button><button class="primary" type="submit">Save</button></div>`;
+    $('#scf-cancel').onclick=()=>{f.hidden=true;};
+    f.onsubmit=async e=>{e.preventDefault();const split=s=>String(s||'').split('\n').map(x=>x.trim()).filter(Boolean).map(x=>x.split('|').map(y=>y.trim()));
+      const d={subjects:split($('#scf-subjects').value).map(a=>({name:a[0],status:(a[1]||'').toLowerCase(),note:a[2]||''})),due:split($('#scf-due').value).filter(a=>/^\d{4}-\d{2}-\d{2}$/.test(a[0])).map(a=>({date:a[0],t:a[1]||'',subject:a[2]||''})),notes:$('#scf-notes').value.trim(),updatedAt:new Date().toISOString()};
+      try{await db.doc('settings/school').set(d);f.hidden=true;toast('Saved');}catch(err){toast('Could not save');}};
+  }
+  $('#btn-edit-school').onclick=openSchoolForm;
+  $('#td-addform').onsubmit=async e=>{e.preventDefault();const t=$('#td-add-text').value.trim();if(!t)return;const d=Object.assign({},day,{date:today,extra:(day.extra||[]).concat([{t}])});day=d;$('#td-add-text').value='';renderToday();try{await db.doc('days/'+today).set(d);}catch(err){toast('Could not save');}};
+  $('#td-finish').onclick=async()=>{
+    if(!db)return;const wo=itemsFor(plans.workout,dow),pr=itemsFor(plans.practice,dow);const c=day.checks||{};
+    const woDone=wo.filter((_,i)=>c['wo'+i]).map(x=>x.t),prDone=pr.filter((_,i)=>c['pr'+i]).map(x=>x.t);
+    const note=$('#td-note').value.trim();
+    const text=`Workout ${woDone.length}/${wo.length}${woDone.length?': '+woDone.join(', '):''}\nPractice ${prDone.length}/${pr.length}${prDone.length?': '+prDone.join(', '):''}`+(day.hwMin?'\nHomework: '+day.hwMin+' min':'')+(note?'\nNote: '+note:'');
+    const d=Object.assign({},day,{date:today,finished:new Date().toISOString(),note});day=d;
+    try{await db.doc('days/'+today).set(d);await db.collection('log').add({date:today,category:'daily',author:'Seve',title:'Daily check-in',text,updatedAt:new Date().toISOString(),updatedBy:uid||''});toast('Day logged');renderToday();}catch(err){toast('Could not save');}
+  };
+
+  // ---------- Workout (TV) ----------
+  function renderWorkout(){
+    const wo=plans.workout||{};
+    $('#wo-day').textContent=now.toLocaleDateString(undefined,{weekday:'long'})+' workout';
+    $('#wo-focus').textContent=wo.focus&&wo.focus[dow]||'';
+    $('#wo-gate').innerHTML=gateHtml(wo);
+    const list=$('#wo-list');list.innerHTML='';const items=itemsFor(wo,dow);items.forEach((it,i)=>checkRow('wo'+i,it,list,true));
+    if(!items.length)list.innerHTML='<div class="empty">Rest day.</div>';
+    const done=items.filter((_,i)=>day.checks&&day.checks['wo'+i]).length;$('#wo-bar').style.width=(items.length?100*done/items.length:0)+'%';
+    $('#wo-source').textContent=wo.source||'';
+    $('#btn-edit-workout').hidden=!canWrite;
+    renderWeek($('#wo-week'),wo);
+  }
+  function renderWeek(box,plan){
+    box.innerHTML='';['mon','tue','wed','thu','fri','sat','sun'].forEach(d=>{const items=itemsFor(plan,d);const el=document.createElement('div');el.className='dayplan'+(d===dow?' today':'');el.innerHTML=`<h3>${DOWN[d]}${plan.focus&&plan.focus[d]?' · '+esc(plan.focus[d]):''}</h3>`+(items.length?'<ul>'+items.map(it=>'<li>'+esc(it.t)+(it.d?'<small>'+esc(it.d)+'</small>':'')+'</li>').join('')+'</ul>':'<div class="empty" style="padding:4px 0">Rest</div>');box.appendChild(el);});
+  }
+  // ---------- Practice ----------
+  function renderPractice(){
+    const pr=plans.practice||{};
+    $('#pr-day').textContent=now.toLocaleDateString(undefined,{weekday:'long'})+' practice';
+    $('#pr-focus').textContent=pr.focus&&pr.focus[dow]||'';
+    $('#pr-gate').innerHTML=gateHtml(pr);
+    const list=$('#pr-today');list.innerHTML='';const items=itemsFor(pr,dow);items.forEach((it,i)=>checkRow('pr'+i,it,list));if(!items.length)list.innerHTML='<div class="empty">No practice planned today.</div>';
+    $('#pr-source').textContent=pr.source||'';$('#btn-edit-practice').hidden=!canWrite;
+    renderWeek($('#pr-week'),pr);
+    const fa=$('#pr-focusareas');fa.innerHTML='';(pr.focusAreas||[]).forEach(f=>{const el=document.createElement('div');el.innerHTML=`<h3>${esc(f.t)}</h3><ul>${(f.items||[]).map(x=>'<li>'+esc(x)+'</li>').join('')}</ul>`;fa.appendChild(el);});
+    const lib=$('#pr-library');lib.innerHTML='';(pr.library||[]).forEach(g=>{const el=document.createElement('div');el.className='dayplan';el.innerHTML=`<h3>${esc(g.t)}</h3><ul>${(g.items||[]).map(it=>'<li>'+esc(it.t)+(it.d?'<small>'+esc(it.d)+'</small>':'')+'</li>').join('')}</ul>`;lib.appendChild(el);});
+  }
+  // ---------- plan editors ----------
+  const linesToItems=s=>String(s||'').split('\n').map(x=>x.trim()).filter(Boolean).map(x=>{const i=x.indexOf(' — ');return i>0?{t:x.slice(0,i).trim(),d:x.slice(i+3).trim()}:{t:x};});
+  const itemsToLines=a=>(a||[]).map(it=>it.t+(it.d?' — '+it.d:'')).join('\n');
+  function openPlanForm(kind){
+    const plan=plans[kind]||{days:{},focus:{}};const f=$(kind==='workout'?'#wo-form':'#pr-form');f.hidden=false;
+    f.innerHTML=`<label class="full">Gate / safety note (shown in orange)<input id="pf-gate" value="${esc(plan.gate||'')}"></label>
+      <label class="full">Source line<input id="pf-source" value="${esc(plan.source||'')}"></label>`+
+      ['mon','tue','wed','thu','fri','sat','sun'].map(d=>`<label class="full">${DOWN[d]} — focus<input id="pf-focus-${d}" value="${esc(plan.focus&&plan.focus[d]||'')}"></label><label class="full">${DOWN[d]} — items, one per line (Title — detail)<textarea id="pf-days-${d}">${esc(itemsToLines(plan.days&&plan.days[d]))}</textarea></label>`).join('')+
+      `<div class="actions"><button type="button" id="pf-cancel">Cancel</button><button class="primary" type="submit">Save plan</button></div>`;
+    f.scrollIntoView({block:'nearest'});
+    $('#pf-cancel').onclick=()=>{f.hidden=true;};
+    f.onsubmit=async e=>{e.preventDefault();const p=Object.assign({},plan);p.gate=$('#pf-gate').value.trim();p.source=$('#pf-source').value.trim();p.days={};p.focus={};['mon','tue','wed','thu','fri','sat','sun'].forEach(d=>{p.days[d]=linesToItems($('#pf-days-'+d).value);p.focus[d]=$('#pf-focus-'+d).value.trim();});p.updatedAt=new Date().toISOString();
+      try{await db.doc('plans/'+kind).set(p);f.hidden=true;toast('Plan saved');}catch(err){toast('Could not save');}};
+  }
+  $('#btn-edit-workout').onclick=()=>openPlanForm('workout');
+  $('#btn-edit-practice').onclick=()=>openPlanForm('practice');
+
+  // ---------- Record: summary ----------
+  function renderTiles(){
+    const rounds=[];events.forEach(e=>[e.r1,e.r2,e.r3].forEach(r=>{const n=num(r);if(n)rounds.push(n);}));
+    $('#t-avg').textContent=rounds.length?(rounds.reduce((a,b)=>a+b,0)/rounds.length).toFixed(1):'—';
+    $('#t-avg-note').textContent=rounds.length?rounds.length+' rounds · low '+Math.min(...rounds):'add round scores to compute';
+    $('#t-hcp').textContent=profile.handicap||'—';$('#t-hcp-note').textContent=profile.handicapAsOf?('as of '+profile.handicapAsOf):'tap Profile to set';
+    const next=nextEvent();$('#t-next').textContent=next?next.name:'—';
+    $('#t-next-note').textContent=next?(fmtDate(next.date,next.endDate)+' · '+(next.course||'')+(next.registered==='Y'?' · registered':' · not registered')):'';
+    $('#t-rtp').textContent=profile.rtpPhase||'—';$('#t-rtp-note').textContent=profile.rtpNote||'';$('#t-rtp').parentElement.hidden=!profile.rtpPhase&&profile.kind==='adult';
+  }
+  // ---------- events ----------
+  function renderEvents(){
+    const tb=$('#evbody');tb.innerHTML='';
+    const list=events.slice().sort((a,b)=>a.date.localeCompare(b.date)).filter(e=>evF==='all'||(evF==='upcoming'?e.date>=today:e.date<today));
+    $('#c-events').textContent=events.length?events.length+' events':'';$('#evempty').hidden=list.length>0;
+    const next=nextEvent();
+    list.forEach(e=>{const tr=document.createElement('tr');tr.className=(e.date<today?'past':'')+(next&&e.id===next.id?' next':'');
+      const reg=e.registered==='Y'?'<span class="pill">Registered</span>':(e.regOpens?'<span class="pill warn">Opens '+esc(e.regOpens)+'</span>':'<span class="pill gray">Not yet</span>');
+      const tot=[e.r1,e.r2,e.r3].map(num).filter(Boolean);
+      tr.innerHTML=`<td class="num">${esc(fmtDate(e.date,e.endDate))}</td><td><strong>${esc(e.name)}</strong>${e.notes?'<div style="font-size:12px;color:var(--muted)">'+esc(e.notes)+'</div>':''}</td><td>${esc(e.tour||'')}</td><td>${esc(e.course||'')}${e.location?'<div style="font-size:12px;color:var(--muted)">'+esc(e.location)+'</div>':''}</td><td>${reg}</td><td class="num">${esc(e.r1||'')}</td><td class="num">${esc(e.r2||'')}</td><td class="num">${esc(e.r3||'')}</td><td class="num">${tot.length?tot.reduce((a,b)=>a+b,0):''}</td><td class="num">${esc(e.place||'')}</td><td style="white-space:nowrap">${canWrite?'<button class="small ghost" data-edit-ev="'+esc(e.id)+'">Edit</button>'+(e.date<=today&&e.reviewed!=='Y'&&tot.length?' <button class="small" data-review-ev="'+esc(e.id)+'">Review</button>':''):''}</td>`;tb.appendChild(tr);});
+    tb.querySelectorAll('[data-edit-ev]').forEach(b=>b.onclick=()=>openEventForm(events.find(x=>x.id===b.dataset.editEv)));
+    tb.querySelectorAll('[data-review-ev]').forEach(b=>b.onclick=()=>{$('#sec-log').open=true;openReviewForm(events.find(x=>x.id===b.dataset.reviewEv));});
+  }
+  function openEventForm(e){
+    e=e||{};const f=$('#evform');f.hidden=false;
+    f.innerHTML=`<label>Tournament<input name="name" id="ev-name" required value="${esc(e.name)}"></label>
+      <label>Tour<select name="tour" id="ev-tour">${['JTNC','PBJGA','US Kids','AJGA','Club','Other'].map(t=>`<option ${e.tour===t?'selected':''}>${t}</option>`).join('')}</select></label>
+      <label>Start date<input type="date" name="date" id="ev-date" required value="${esc(e.date||'')}"></label>
+      <label>End date<input type="date" name="endDate" id="ev-end" value="${esc(e.endDate||'')}"></label>
+      <label>Course<input name="course" id="ev-course" value="${esc(e.course)}"></label>
+      <label>Location<input name="location" id="ev-loc" value="${esc(e.location)}"></label>
+      <label>Registered<select name="registered" id="ev-reg"><option value="N" ${e.registered!=='Y'?'selected':''}>No</option><option value="Y" ${e.registered==='Y'?'selected':''}>Yes</option></select></label>
+      <label>Registration opens<input name="regOpens" id="ev-regopens" value="${esc(e.regOpens)}"></label>
+      <label>Round 1<input name="r1" id="ev-r1" inputmode="numeric" value="${esc(e.r1)}"></label>
+      <label>Round 2<input name="r2" id="ev-r2" inputmode="numeric" value="${esc(e.r2)}"></label>
+      <label>Round 3<input name="r3" id="ev-r3" inputmode="numeric" value="${esc(e.r3)}"></label>
+      <label>Place<input name="place" id="ev-place" value="${esc(e.place)}"></label>
+      <label>Tee time<input name="teeTime" id="ev-tee" value="${esc(e.teeTime||'')}"></label>
+      <label>GIR / round<input name="gir" inputmode="numeric" value="${esc(e.gir||'')}"></label><label>Putts / round<input name="putts" inputmode="numeric" value="${esc(e.putts||'')}"></label><label>3-putts<input name="threePutts" inputmode="numeric" value="${esc(e.threePutts||'')}"></label><label>Up and downs<input name="upDowns" inputmode="numeric" value="${esc(e.upDowns||'')}"></label><label>Penalties<input name="penalties" inputmode="numeric" value="${esc(e.penalties||'')}"></label>
+      <label class="full">Notes<input name="notes" id="ev-notes" value="${esc(e.notes)}"></label>
+      <div class="actions">${e.id?'<button type="button" class="ghost" id="ev-del">Delete</button>':''}<button type="button" id="ev-cancel">Cancel</button><button class="primary" type="submit">Save</button></div>`;
+    f.scrollIntoView({block:'nearest'});$('#ev-cancel').onclick=()=>{f.hidden=true;};
+    const del=$('#ev-del');if(del)del.onclick=async()=>{if(del.textContent!=='Confirm delete'){del.textContent='Confirm delete';return;}await db.doc('events/'+e.id).delete();f.hidden=true;toast('Deleted');};
+    f.onsubmit=async ev=>{ev.preventDefault();const d={};new FormData(f).forEach((v,k)=>d[k]=String(v).trim());d.updatedAt=new Date().toISOString();d.updatedBy=uid||'';
+      try{if(e.id){await db.doc('events/'+e.id).set(d);}else{await db.collection('events').add(d);}f.hidden=true;toast('Saved');}catch(err){toast(err&&err.code==='invalid_argument'?'You do not have edit access.':'Could not save');}};
+  }
+  // ---------- log ----------
+  const catLabel={journal:'Journal',golf:'Golf / swing',tournament:'Tournament review',fitness:'Fitness',recovery:'Recovery',mindset:'Mindset',daily:'Daily check-in',school:'School',admin:'Admin'};
+  async function renderLog(){
+    const box=$('#logbody');box.innerHTML='';
+    const list=log.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')).filter(l=>logF==='all'||l.category===logF);
+    $('#c-log').textContent=log.length?log.length+' entries':'';$('#logempty').hidden=list.length>0;
+    let names={};if(user&&user.profiles){try{names=await user.profiles([...new Set(list.map(l=>l.updatedBy).filter(Boolean))])||{};}catch(e){}}
+    list.forEach(l=>{const d=document.createElement('div');d.className='entry';const who=l.author||(names[l.updatedBy]&&names[l.updatedBy].name)||'';
+      d.innerHTML=`<div class="when">${esc(fmtDate(l.date))}</div><div><div class="cat cat-${esc(l.category)}">${esc(catLabel[l.category]||l.category)}</div><div class="ttl">${esc(l.title)}</div>${l.well!==undefined?'<div class="txt review"><div><b>Went well</b> '+esc(l.well)+'</div><div><b>Didn’t</b> '+esc(l.didnt)+'</div><div><b>Learned</b> '+esc(l.learned)+'</div><div><b>This week</b> '+esc(l.practice)+'</div></div>':'<div class="txt">'+esc(l.text)+'</div>'}${who?'<div class="by">'+esc(who)+'</div>':''}${canWrite?'<div class="acts"><button class="small ghost" data-edit-log="'+esc(l.id)+'">Edit</button></div>':''}</div>`;box.appendChild(d);});
+    box.querySelectorAll('[data-edit-log]').forEach(b=>b.onclick=()=>openLogForm(log.find(x=>x.id===b.dataset.editLog)));
+  }
+  function openLogForm(l){
+    l=l||{};const f=$('#logform');f.hidden=false;
+    f.innerHTML=`<label>Date<input type="date" name="date" id="lg-date" required value="${esc(l.date||today)}"></label>
+      <label>Category<select name="category" id="lg-cat">${Object.keys(catLabel).map(k=>`<option value="${k}" ${l.category===k?'selected':''}>${catLabel[k]}</option>`).join('')}</select></label>
+      <label>Logged by<input name="author" id="lg-author" placeholder="Your name" value="${esc(l.author)}"></label>
+      <label class="full">Title<input name="title" id="lg-title" required value="${esc(l.title)}"></label>
+      <label class="full">Notes<textarea name="text" id="lg-text" style="font-family:var(--body);font-size:14px">${esc(l.text)}</textarea></label>
+      <div class="actions">${l.id?'<button type="button" class="ghost" id="lg-del">Delete</button>':''}<button type="button" id="lg-cancel">Cancel</button><button class="primary" type="submit">Save</button></div>`;
+    f.scrollIntoView({block:'nearest'});$('#lg-cancel').onclick=()=>{f.hidden=true;};
+    const del=$('#lg-del');if(del)del.onclick=async()=>{if(del.textContent!=='Confirm delete'){del.textContent='Confirm delete';return;}await db.doc('log/'+l.id).delete();f.hidden=true;toast('Deleted');};
+    f.onsubmit=async ev=>{ev.preventDefault();const d={};new FormData(f).forEach((v,k)=>d[k]=String(v).trim());d.updatedAt=new Date().toISOString();d.updatedBy=uid||'';
+      try{if(l.id){await db.doc('log/'+l.id).set(d);}else{await db.collection('log').add(d);}f.hidden=true;toast('Saved');}catch(err){toast(err&&err.code==='invalid_argument'?'You do not have edit access.':'Could not save');}};
+  }
+  // ---------- team ----------
+  function renderTeam(){
+    const box=$('#teambody');box.innerHTML='';$('#c-team').textContent=team.length?team.length+' people':'';
+    team.slice().sort((a,b)=>(a.order||99)-(b.order||99)).forEach(m=>{const d=document.createElement('div');d.className='member';
+      d.innerHTML=`<div class="nm">${esc(m.name)}</div><div class="role">${esc(m.role)}${m.org?' · '+esc(m.org):''}</div>${m.focus?'<div style="font-size:13px;margin-top:4px">'+esc(m.focus)+'</div>':''}${m.contact?'<div class="ct">'+esc(m.contact)+'</div>':''}${canWrite?'<div class="acts" style="margin-top:8px"><button class="small ghost" data-edit-tm="'+esc(m.id)+'">Edit</button></div>':''}`;box.appendChild(d);});
+    box.querySelectorAll('[data-edit-tm]').forEach(b=>b.onclick=()=>openTeamForm(team.find(x=>x.id===b.dataset.editTm)));
+  }
+  function openTeamForm(m){
+    m=m||{};const f=$('#teamform');f.hidden=false;
+    f.innerHTML=`<label>Name<input name="name" id="tm-name" required value="${esc(m.name)}"></label><label>Role<input name="role" id="tm-role" value="${esc(m.role)}"></label><label>Organization<input name="org" id="tm-org" value="${esc(m.org)}"></label><label>Contact<input name="contact" id="tm-contact" value="${esc(m.contact)}"></label><label class="full">Focus / cadence<input name="focus" id="tm-focus" value="${esc(m.focus)}"></label><label>Sort order<input name="order" id="tm-order" inputmode="numeric" value="${esc(m.order||'')}"></label>
+      <div class="actions">${m.id?'<button type="button" class="ghost" id="tm-del">Remove</button>':''}<button type="button" id="tm-cancel">Cancel</button><button class="primary" type="submit">Save</button></div>`;
+    $('#tm-cancel').onclick=()=>{f.hidden=true;};
+    const del=$('#tm-del');if(del)del.onclick=async()=>{if(del.textContent!=='Confirm remove'){del.textContent='Confirm remove';return;}await db.doc('team/'+m.id).delete();f.hidden=true;};
+    f.onsubmit=async ev=>{ev.preventDefault();const d={};new FormData(f).forEach((v,k)=>d[k]=String(v).trim());d.order=num(d.order)||99;try{if(m.id){await db.doc('team/'+m.id).set(d);}else{await db.collection('team').add(d);}f.hidden=true;toast('Saved');}catch(err){toast('Could not save');}};
+  }
+  // ---------- profile ----------
+  function lines(s){return String(s||'').split('\n').map(x=>x.trim()).filter(Boolean);}
+  function renderProfile(){
+    const p=profile;const box=$('#profbody');
+    const li=arr=>arr.length?'<ul>'+arr.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>':'<div class="empty" style="padding:4px 0">Not set</div>';
+    const linkli=arr=>arr.length?'<ul class="links">'+arr.map(x=>{const i=x.indexOf('|');const t=i>0?x.slice(0,i).trim():x;const u=i>0?x.slice(i+1).trim():'';return'<li>'+(u?'<a href="'+esc(u)+'" target="_blank" rel="noopener">'+esc(t)+'</a>':esc(t))+'</li>';}).join('')+'</ul>':'<div class="empty" style="padding:4px 0">None yet</div>';
+    box.innerHTML=`<div><h3>Player</h3>${li(lines(p.bio))}</div><div><h3>Season goals</h3>${li(lines(p.goals))}</div><div><h3>Current priorities (90 days)</h3>${li(lines(p.priorities))}</div><div><h3>Metrics we track</h3>${li(lines(p.metrics))}</div><div><h3>Weekly rhythm</h3>${li(lines(p.rhythm))}</div><div><h3>Resources &amp; source docs</h3>${linkli(lines(p.links))}</div>`;
+  }
+  function openProfileForm(){
+    const p=profile;const f=$('#profform');f.hidden=false;
+    const ta=(k,lab,ph)=>`<label class="full">${lab}<textarea name="${k}" id="pf-${k}" style="font-family:var(--body);font-size:14px" placeholder="${ph||'One per line'}">${esc(p[k]||'')}</textarea></label>`;
+    f.innerHTML=`<label>Handicap<input name="handicap" id="pf-hcp" value="${esc(p.handicap||'')}"></label><label>Handicap as of<input name="handicapAsOf" id="pf-hcpdate" value="${esc(p.handicapAsOf||'')}"></label><label>Return-to-play phase<input name="rtpPhase" id="pf-rtp" value="${esc(p.rtpPhase||'')}"></label><label>Return-to-play note<input name="rtpNote" id="pf-rtpnote" value="${esc(p.rtpNote||'')}"></label>
+      ${ta('bio','Player')}${ta('goals','Season goals')}${ta('priorities','Current priorities (90 days)')}${ta('metrics','Metrics we track')}${ta('rhythm','Weekly rhythm')}${ta('links','Resources (Title | https://…)','Title | URL, one per line')}
+      <div class="actions"><button type="button" id="pf-cancel2">Cancel</button><button class="primary" type="submit">Save</button></div>`;
+    $('#pf-cancel2').onclick=()=>{f.hidden=true;};
+    f.onsubmit=async ev=>{ev.preventDefault();const d={};new FormData(f).forEach((v,k)=>d[k]=String(v));try{await db.doc('settings/profile').set(d);f.hidden=true;toast('Saved');}catch(err){toast('Could not save');}};
+  }
+
+  // ---------- wiring ----------
+  $('#btn-add-event').onclick=()=>openEventForm();$('#btn-add-log').onclick=()=>openLogForm();$('#btn-add-member').onclick=()=>openTeamForm();$('#btn-edit-profile').onclick=()=>openProfileForm();
+  document.querySelectorAll('#evfilter .chip').forEach(c=>c.onclick=()=>{evF=c.dataset.f;document.querySelectorAll('#evfilter .chip').forEach(x=>x.classList.toggle('on',x===c));renderEvents();});
+  document.querySelectorAll('#logfilter .chip').forEach(c=>c.onclick=()=>{logF=c.dataset.f;document.querySelectorAll('#logfilter .chip').forEach(x=>x.classList.toggle('on',x===c));renderLog();});
+  ['sec-schedule','sec-log','sec-team','sec-profile'].forEach(id=>{const el=document.getElementById(id);try{const v=localStorage.getItem('open:'+id);if(v!==null)el.open=v==='1';}catch(e){}el.addEventListener('toggle',()=>{try{localStorage.setItem('open:'+id,el.open?'1':'0');}catch(e){}});});
+  function setWrite(w){canWrite=w;document.querySelectorAll('#btn-add-event,#btn-add-log,#btn-add-member,#btn-edit-profile,#td-addform,#td-finish,#btn-edit-school,#btn-edit-swing,#btn-add-note,#btn-add-stat').forEach(b=>b.hidden=!w);$('#td-hw').disabled=!w;}
+  function renderAll(){applyMode();renderNotes();renderStats();renderCard();renderToday();renderWorkout();renderPractice();renderSwing();renderJournal();renderSchool();renderTiles();renderEvents();renderLog();renderTeam();renderProfile();}
+
+  // Static site build: data.json is the published record; daily check-offs live in this browser.
+  let snapAt='';
+  const LS=k=>{try{return JSON.parse(localStorage.getItem('portal:'+k)||'null');}catch(e){return null;}};
+  const LSset=(k,v)=>{try{localStorage.setItem('portal:'+k,JSON.stringify(v));}catch(e){}};
+  db={doc:p=>({set:async d=>{if(!p.startsWith('days/'))throw new Error('read-only');LSset(p,d);reloadDays();},delete:async()=>{throw new Error('read-only');}}),
+      collection:c=>({add:async d=>{if(c!=='log')throw new Error('read-only');const k='localLog';LSset(k,(LS(k)||[]).concat([d]));}})};
+  function reloadDays(){weekDays={};recentDays={};const mon=new Date(now);mon.setDate(now.getDate()-((now.getDay()+6)%7));const back=new Date(now);back.setDate(now.getDate()-13);
+    for(let i=0;i<7;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);const k=localISO(d);const v=LS('days/'+k);if(v)weekDays[k]=v;}
+    for(let i=0;i<14;i++){const d=new Date(back);d.setDate(back.getDate()+i);const k=localISO(d);const v=LS('days/'+k);if(v)recentDays[k]=v;}
+    day=weekDays[today]||{};}
+  const applySnap=sn=>{snapAt=sn.publishedAt||'';events=sn.events||[];log=sn.log||[];team=sn.team||[];profile=sn.profile||{};school=sn.school||{};plans=sn.plans||{};swing=sn.swing||{};journal=sn.journal||{};notes=sn.notes||{};stats=sn.stats||[];};
+  try{applySnap(JSON.parse(document.getElementById('snap').textContent));}catch(e){}
+  const snapLabel=()=>{if(!snapAt)return 'Published record';const d=new Date(snapAt);return 'Updated '+d.toLocaleDateString(undefined,{month:'short',day:'numeric'});};
+  canWrite=true;reloadDays();renderAll();
+  const hideEditors=()=>document.querySelectorAll('#btn-add-event,#btn-add-log,#btn-add-member,#btn-edit-profile,#btn-edit-school,#btn-edit-workout,#btn-edit-practice,#btn-edit-swing,#btn-add-note,#btn-add-stat,[data-edit-ev],[data-edit-log],[data-edit-tm],[data-edit-st],[data-review-ev]').forEach(b=>b.hidden=true);
+  hideEditors();$('#status').textContent=snapLabel();
+  fetch('data.json?t='+Date.now()).then(r=>r.json()).then(sn=>{applySnap(sn);renderAll();hideEditors();$('#status').textContent=snapLabel();}).catch(()=>{});
+  new MutationObserver(hideEditors).observe(document.body,{childList:true,subtree:true});
+})();
+</script>

@@ -1,0 +1,327 @@
+{
+ "publishedAt": "2026-11-05T05:10:00Z",
+ "events": [],
+ "team": [
+  {
+   "id": "t01",
+   "name": "Zach",
+   "role": "Golf coach",
+   "org": "UGP Austin",
+   "focus": "Building a low-maintenance swing: depth in the backswing, then shift into the lead side without getting steep.",
+   "contact": "",
+   "order": 1
+  },
+  {
+   "id": "t02",
+   "name": "O'Neill Cowan",
+   "role": "Director of Coaching",
+   "org": "UGP",
+   "focus": "Putting: square face at impact, toe and heel moving the same speed.",
+   "contact": "",
+   "order": 2
+  },
+  {
+   "id": "t03",
+   "name": "Dr. Emmanuel Garcia",
+   "role": "Recovery",
+   "org": "UGP",
+   "focus": "Lower-body program (#1 and #2, alternating days); mobility program.",
+   "contact": "",
+   "order": 3
+  }
+ ],
+ "log": [
+  {
+   "id": "l01",
+   "date": "2026-02-24",
+   "category": "golf",
+   "author": "Zach (UGP ATX)",
+   "title": "Session — building a low-maintenance golf swing",
+   "text": "For Mac, it starts with depth in the backswing. Opens the door for us to shift into our lead side without getting super steep/vertical.\nSequence: 1. Deeper backswing … (full sequence in the Mighty post; Swing Catalyst video attached there)."
+  },
+  {
+   "id": "l02",
+   "date": "2026-04-01",
+   "category": "fitness",
+   "author": "Mac Todd",
+   "title": "Walking, diet, moving better",
+   "text": "Taking some good rigorous walks lately and monitoring my diet. Moving a little better. Recent smooth 7 iron: 183 carry, 88.3 club speed, 126.2 ball speed, 1.43 smash, little draw.\n(Feed shows “7 months ago” — date approximate.)"
+  },
+  {
+   "id": "l03",
+   "date": "2025-02-05",
+   "category": "recovery",
+   "author": "UGP ATX",
+   "title": "RECOVERY — Mobility Program",
+   "text": "Featured program in the member space."
+  },
+  {
+   "id": "l04",
+   "date": "2024-03-03",
+   "category": "fitness",
+   "author": "Dr. Emmanuel Garcia",
+   "title": "Lower Body Workout #2",
+   "text": "Alternate days with Workout #1. Demo video in the Mighty post."
+  },
+  {
+   "id": "l05",
+   "date": "2024-03-01",
+   "category": "golf",
+   "author": "O'Neill Cowan",
+   "title": "Putting drill — two balls, same distance",
+   "text": "At home or at the course, 8–12 feet from the target. Place two golf balls next to each other; the goal is to hit both the exact same distance. This ensures the putter comes in square, toe and heel traveling the same speed at impact. Alternate 10 reps of the drill with 5 reps of a single ball. Ball should feel like it comes out of the center after 3–4 sets."
+  },
+  {
+   "id": "l06",
+   "date": "2024-02-29",
+   "category": "recovery",
+   "author": "Mac Todd",
+   "title": "Icing the knee and meditating",
+   "text": "Recovery is a critical and often overlooked aspect of performance."
+  },
+  {
+   "id": "l07",
+   "date": "2024-02-27",
+   "category": "admin",
+   "author": "Mac Todd",
+   "title": "Swing video with lines drawn",
+   "text": "Takes quite a while to go through this process of editing the video in another app and then saving and uploading here. (The product note: shoot, annotate and file in one motion.)"
+  }
+ ],
+ "stats": [
+  {
+   "id": "s01",
+   "date": "2026-04-01",
+   "label": "7 iron carry",
+   "value": "183",
+   "unit": "yds",
+   "source": "TrackMan",
+   "note": "smooth, little draw · date approximate"
+  },
+  {
+   "id": "s02",
+   "date": "2026-04-01",
+   "label": "7 iron club speed",
+   "value": "88.3",
+   "unit": "mph",
+   "source": "TrackMan",
+   "note": ""
+  },
+  {
+   "id": "s03",
+   "date": "2026-04-01",
+   "label": "7 iron ball speed",
+   "value": "126.2",
+   "unit": "mph",
+   "source": "TrackMan",
+   "note": ""
+  },
+  {
+   "id": "s04",
+   "date": "2026-04-01",
+   "label": "7 iron smash factor",
+   "value": "1.43",
+   "unit": "",
+   "source": "TrackMan",
+   "note": ""
+  }
+ ],
+ "profile": {
+  "name": "Mac Todd",
+  "kind": "adult",
+  "tagline": "Swing, body, recovery and numbers in one place, built from two years of the UGP feed.",
+  "bio": "Mac Todd · Carmel, CA\nUGP member since the beginning; coached at Austin and Santa Monica\nRebuilt from the Mighty Networks member space (Feb 2024 – Apr 2026)",
+  "goals": "A low-maintenance swing (Zach)\nMove better: legs, mobility, recovery",
+  "priorities": "Depth in the backswing, shift into the lead side\nPutting: square face, two-ball drill\nLower-body program, alternating days",
+  "metrics": "7 iron carry, club speed, ball speed, smash (TrackMan)\nWorkouts completed per week",
+  "rhythm": "",
+  "links": "",
+  "handicap": "",
+  "handicapAsOf": "",
+  "rtpPhase": "",
+  "rtpNote": "",
+  "mindsetCue": "Recovery is part of performance."
+ },
+ "school": {
+  "subjects": [],
+  "due": [],
+  "notes": ""
+ },
+ "notes": {
+  "swing": {
+   "by": "Zach",
+   "date": "2026-02-24",
+   "text": "Depth in the backswing first. That opens the door to shift into the lead side without getting steep."
+  }
+ },
+ "swing": {
+  "folder": "",
+  "videos": []
+ },
+ "journal": {
+  "formUrl": ""
+ },
+ "plans": {
+  "practice": {
+   "gate": "",
+   "source": "From the UGP feed: O'Neill (Mar 2024), Zach (Feb 2026).",
+   "focus": {
+    "mon": "Putting",
+    "tue": "Backswing depth",
+    "wed": "Putting",
+    "thu": "Backswing depth",
+    "fri": "Play",
+    "sat": "Play",
+    "sun": "Rest"
+   },
+   "days": {
+    "mon": [
+     {
+      "t": "Two-ball putting drill",
+      "d": "8–12 ft. 10 reps two balls, 5 reps one ball. 3–4 sets."
+     }
+    ],
+    "tue": [
+     {
+      "t": "Deeper backswing reps",
+      "d": "Zach’s sequence. Slow, feel the depth before the shift."
+     }
+    ],
+    "wed": [
+     {
+      "t": "Two-ball putting drill",
+      "d": ""
+     }
+    ],
+    "thu": [
+     {
+      "t": "Deeper backswing reps",
+      "d": ""
+     }
+    ],
+    "fri": [
+     {
+      "t": "Play",
+      "d": ""
+     }
+    ],
+    "sat": [
+     {
+      "t": "Play",
+      "d": ""
+     }
+    ],
+    "sun": []
+   },
+   "focusAreas": [
+    {
+     "t": "Backswing depth",
+     "items": [
+      "Depth first; it lets the lead-side shift happen without getting steep (Zach)"
+     ]
+    },
+    {
+     "t": "Lead-side shift",
+     "items": [
+      "Shift into the lead side from a deep backswing, not a vertical one (Zach)"
+     ]
+    },
+    {
+     "t": "Putting",
+     "items": [
+      "Two-ball drill: square face, toe and heel the same speed (O'Neill)"
+     ]
+    }
+   ],
+   "library": [
+    {
+     "t": "Putting",
+     "items": [
+      {
+       "t": "Two-ball, same distance",
+       "d": "8–12 ft; 10 reps two balls, 5 reps single ball; 3–4 sets"
+      }
+     ]
+    },
+    {
+     "t": "Swing",
+     "items": [
+      {
+       "t": "Deeper backswing reps",
+       "d": "Zach’s sequence"
+      }
+     ]
+    }
+   ]
+  },
+  "workout": {
+   "gate": "",
+   "source": "Dr. Garcia’s lower-body program (Mar 2024), alternating days; mobility program (Feb 2025). Details live in the Mighty videos.",
+   "focus": {
+    "mon": "Lower body #1",
+    "tue": "Mobility",
+    "wed": "Lower body #2",
+    "thu": "Mobility",
+    "fri": "Lower body #1",
+    "sat": "Walk",
+    "sun": "Mobility"
+   },
+   "days": {
+    "mon": [
+     {
+      "t": "Lower Body Workout #1",
+      "d": "Dr. Garcia’s program"
+     }
+    ],
+    "tue": [
+     {
+      "t": "Mobility program",
+      "d": "UGP ATX recovery"
+     }
+    ],
+    "wed": [
+     {
+      "t": "Lower Body Workout #2",
+      "d": "Alternate days with #1"
+     }
+    ],
+    "thu": [
+     {
+      "t": "Mobility program",
+      "d": ""
+     }
+    ],
+    "fri": [
+     {
+      "t": "Lower Body Workout #1",
+      "d": ""
+     }
+    ],
+    "sat": [
+     {
+      "t": "Rigorous walk",
+      "d": ""
+     }
+    ],
+    "sun": [
+     {
+      "t": "Mobility program",
+      "d": ""
+     }
+    ]
+   }
+  },
+  "reading": {
+   "items": [
+    {
+     "t": "Meditate 10 minutes",
+     "d": "",
+     "m": "daily"
+    }
+   ]
+  },
+  "school": {
+   "items": []
+  }
+ }
+}
