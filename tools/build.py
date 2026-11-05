@@ -43,7 +43,8 @@ def build(athlete_dir: pathlib.Path):
     prof = data.get('profile',{})
     name = prof.get('name') or prof.get('bio','').split(',')[0] or athlete_dir.name
     kind = 'Player' if prof.get('kind')=='adult' else 'Student athlete'
-    return name, kind
+    photo = prof.get('photo') or ''
+    return name, kind, photo
 
 if __name__ == '__main__':
     built = []
@@ -51,13 +52,13 @@ if __name__ == '__main__':
         if d.is_dir() and (d/'data.json').exists():
             built.append((d.name,)+build(d))
     # landing page
-    cards = '\n'.join(f'<a class="card" href="{slug}/"><div class="eyebrow">{kind}</div><h2>{name}</h2><p>Today · Workout · Practice · Swing · Journal · Record</p></a>' for slug,name,kind in built)
+    cards = '\n'.join(f'<a class="card" href="{slug}/">' + (f'<img class="ph" src="{slug}/{photo}" alt="">' if photo and not photo.startswith('data:') else '<div class="ph blank"></div>') + f'<div><div class="eyebrow">{kind}</div><h2>{name}</h2><p>Today · Workout · Practice · Swing · Journal · Record</p></div></a>' for slug,name,kind,photo in built)
     (root/'index.html').write_text(f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>UGP Juniors</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>:root{{--accent:#1a6b3c;--bg:#f6f7f5;--fg:#111;--muted:#5c6660;--line:#e3e6e2}}body{{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--fg)}}
 main{{max-width:960px;margin:0 auto;padding:48px 16px}}.eyebrow{{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);font-weight:700}}
 h1{{font-size:40px;margin:6px 0 4px}}.sub{{color:var(--muted);margin:0 0 32px}}.grid{{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}}
-.card{{display:block;background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px;text-decoration:none;color:inherit}}.card:hover{{border-color:var(--accent)}}.card h2{{margin:6px 0 4px;font-size:22px}}.card p{{margin:0;color:var(--muted);font-size:14px}}
+.card{{display:block;background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px;text-decoration:none;color:inherit}}.card:hover{{border-color:var(--accent)}}.card{{display:flex;gap:16px;align-items:center}}.ph{{width:72px;height:72px;border-radius:50%;object-fit:cover;flex:none}}.ph.blank{{background:var(--line)}}.card h2{{margin:6px 0 4px;font-size:22px}}.card p{{margin:0;color:var(--muted);font-size:14px}}
 footer{{margin-top:48px;color:var(--muted);font-size:13px}}</style></head><body><main>
 <div class="eyebrow">Urban Golf Performance</div><h1>UGP Juniors</h1><p class="sub">One record per athlete: golf, training, recovery, school and home, kept by the whole team.</p>
 <div class="grid">{cards}</div>
