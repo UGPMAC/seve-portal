@@ -549,7 +549,7 @@ form.edit .actions{grid-column:1/-1;display:flex;gap:8px;justify-content:flex-en
     const list=$('#wo-list');list.innerHTML='';const items=itemsFor(wo,dow);items.forEach((it,i)=>checkRow('wo'+i,it,list,true));
     if(!items.length)list.innerHTML='<div class="empty">Rest day.</div>';
     const done=items.filter((_,i)=>day.checks&&day.checks['wo'+i]).length;$('#wo-bar').style.width=(items.length?100*done/items.length:0)+'%';
-    $('#wo-source').textContent=wo.source||'';
+    $('#wo-source').innerHTML=esc(wo.source||'')+(wo.rules?'<br><b>Rest:</b> '+esc(wo.rules):'')+(wo.pdf?' · <a href="'+esc(wo.pdf)+'" target="_blank" rel="noopener">Program PDF</a>':'')+(wo.videos?' · <a href="'+esc(wo.videos)+'" target="_blank" rel="noopener">Exercise videos</a>':'');
     $('#btn-edit-workout').hidden=!canWrite;
     renderWeek($('#wo-week'),wo);
   }
